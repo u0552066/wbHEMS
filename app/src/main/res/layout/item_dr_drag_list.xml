@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_equipment"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:text="@string/Ac"/>
+        <TextView
+            android:id="@+id/tv_equipment_pw"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:text="1.2"/>
+
+        <Switch
+            android:id="@+id/sw_equipment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"/>
+        <Button
+            android:id="@+id/btn_lowestpay"
+            android:layout_width="75dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="35dp"
+            android:background="@drawable/button_shape3"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/colorAccent"
+            android:text="0"/>
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="10dp"
+            app:srcCompat = "@drawable/arrow_up_down"
+            android:id="@+id/iv_move"/>
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@drawable/shadow"/>
+
+
+</LinearLayout>
