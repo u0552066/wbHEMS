@@ -423,7 +423,43 @@ public class ControlFragment_92710 extends Fragment {
         };
         requestQueue.add(postRequest);
     }
+    //風扇旋轉
+    private void setFan_turn(String name){
+        final JSONObject body = new JSONObject();
+        try {
+            body.put("action", "setHemsAppliance");
+            body.put("field","92710");
+            body.put("mode","control");
+            body.put("name",name);
+            body.put("token",Token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        postRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("FanTurn_body",body.toString());
+                Log.d("setFanTurn_respone", response);
+                getHemsApplianceByName();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VolleyError_FanTurn", error.toString());
+            }
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return body.toString().getBytes();
+            }
 
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+        requestQueue.add(postRequest);
+    }
     //排風扇
     private void exhaust_findViewById() {
         img_Exhaust_1 = getView().findViewById(R.id.img_exhaust_1);
@@ -527,7 +563,7 @@ public class ControlFragment_92710 extends Fragment {
         btn_Turn_1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                setFan_turn("fan_1");
             }
         });
         //風扇風度

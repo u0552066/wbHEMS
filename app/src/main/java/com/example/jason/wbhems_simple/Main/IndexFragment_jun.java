@@ -84,6 +84,7 @@ public class IndexFragment_jun extends Fragment {
     private SharedPreferences setting;
     private SharedPreferences.Editor settingedit;
     String User,Token;
+    String[] Chart_id = {"空調","照明、風扇、排風扇","插座","總和"};
     private Timer timer;
     public IndexFragment_jun() {
         // Required empty public constructor
@@ -136,7 +137,7 @@ public class IndexFragment_jun extends Fragment {
         //宣告Timer
         timer =new Timer();
         //設定Timer(task為執行內容，0代表立刻開始,間格5秒執行一次)
-        timer.schedule(task, 0,500000);
+        timer.schedule(task, 0,5000);
     }
     private TimerTask task = new TimerTask(){
         @Override
@@ -464,7 +465,7 @@ public class IndexFragment_jun extends Fragment {
                 String[] date = formatter.format(curDate).split("-");
                 Log.d("now", formatter.format(curDate));
                 txtTime.setVisibility(View.GONE);
-                getChart("getHistoryInNow", Integer.valueOf(date[0]), Integer.valueOf(date[1])-1, Integer.valueOf(date[2]));
+                getChart("now", Integer.valueOf(date[0]), Integer.valueOf(date[1])-1, Integer.valueOf(date[2]));
             }
         });
         btnDay.setOnClickListener(new Button.OnClickListener() {
@@ -480,7 +481,7 @@ public class IndexFragment_jun extends Fragment {
                         String format = setDateFormat(year,month,day);
                         txtTime.setVisibility(View.VISIBLE);
                         txtTime.setText(format);
-                        getChart("getHistoryInDay", year, month, day);
+                        getChart("day", year, month, day);
                     }
 
                 }, mYear,mMonth, mDay).show();
@@ -499,7 +500,7 @@ public class IndexFragment_jun extends Fragment {
                         String format = setMonthFormat(year,month);
                         txtTime.setVisibility(View.VISIBLE);
                         txtTime.setText(format);
-                        getChart("getHistoryInMonth", year, month, 0);
+                        getChart("month", year, month, 0);
                     }
 
                 }, mYear,mMonth, mDay).show();
@@ -518,7 +519,7 @@ public class IndexFragment_jun extends Fragment {
                         String format = String.valueOf(year);
                         txtTime.setVisibility(View.VISIBLE);
                         txtTime.setText(format);
-                        getChart("getHistoryInYear", year, 0, 0);
+                        getChart("year", year, 0, 0);
                     }
 
                 }, mYear,mMonth, mDay).show();
@@ -655,27 +656,22 @@ public class IndexFragment_jun extends Fragment {
         }
     }
 
-    public void getChart(final String button, int year, int month, int day) {
-        /*final JSONObject body = new JSONObject();
+    public void getChart(final String time, int year, int month, int day) {
+        final JSONObject body = new JSONObject();
         try {
-            body.put("action", button);
-            body.put("field", "xinglong2");
-            body.put("cluster", "1");
-            body.put("token", "mDSbpZrRXACEsBE8WR34");
-            switch (button){
-                case "getHistoryInYear":
+            body.put("action", "getHemsConsumptionHistories");
+            body.put("field", User);
+            body.put("time",time);
+            body.put("token", Token);
+            switch (time){
+                case "year":
                     body.put("year", String.valueOf(year));
                     break;
-                case "getHistoryInMonth":
-                    body.put("year", String.valueOf(year));
-                    body.put("month", String.valueOf(month+1));
-                    break;
-                case "getHistoryInDay":
+                case "month":
                     body.put("year", String.valueOf(year));
                     body.put("month", String.valueOf(month+1));
-                    body.put("day", String.valueOf(day));
                     break;
-                case "getHistoryInNow":
+                case "day":
                     body.put("year", String.valueOf(year));
                     body.put("month", String.valueOf(month+1));
                     body.put("day", String.valueOf(day));
@@ -685,41 +681,61 @@ public class IndexFragment_jun extends Fragment {
             e.printStackTrace();
         }
 
-        postRequest = new StringRequest(Request.Method.POST, url_room, new Response.Listener<String>() {
+        postRequest = new StringRequest(Request.Method.POST, url_ami, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 // response
                 ArrayList<ChartItem> list = new ArrayList<ChartItem>();
                 ArrayList<BarEntry> BarEntries = new ArrayList<BarEntry>();
-                ArrayList<Entry> LineEntries = new ArrayList<Entry>();
+                ArrayList<Entry> LineEntries_ac = new ArrayList<Entry>();
                 ArrayList<String> array = new ArrayList<String>();
-                String[] Chart_id = {"Power"};
+                String[] Chart_id = {"空調","照明、風扇、排風扇","插座","總和"};
                 try {
                     Log.d("body", body.toString());
-                    //JSONArray array = new JSONArray(response);
+                    int num_date = 0;
                     JSONObject object = new JSONObject(response);
-                    Log.d("Login", object.toString());
-                    int num = object.getJSONArray("label").length();
+                    int num = object.getJSONArray("data").length();
+                    for(int i = 0; i<num; i++){
+                        if(object.getJSONArray("data").getJSONObject(i).getString("name").equals("ac_1")){
+                            num_date = num_date+1;
+                        }
+                    }
+                    for(int j = 0; j<num_date; j++){
+                        switch (time){
+                            case "year":
+                                String date = object.getJSONArray("data").getJSONObject(j).getString("month");
+                                array.add(new String(date));
+                                break;
+                            case "month":
+                                String date_month = object.getJSONArray("data").getJSONObject(j).getString("month");
+                                String date_day= object.getJSONArray("data").getJSONObject(j).getString("day");
+                                String Date = date_month+"/"+date_day;
+                                array.add(new String());
+                                break;
+                            case "day":
+                                break;
+                        }
+                    }
                     Log.d("num", String.valueOf(num));
                     for (int i = 0;i < num;i++){
-                        String label = object.getJSONArray("label").getString(i);
+                        //String label = object.getJSONArray("label").getString(i);
                         String power = object.getJSONArray("power").getString(i);
                         BarEntries.add(new BarEntry(i, Float.parseFloat(power)));
-                        LineEntries.add(new Entry(i, Float.parseFloat(power)));
-                        array.add(new String(label));
+                        LineEntries_ac.add(new Entry(i, Float.parseFloat(power)));
+                        //array.add(new String(label));
                     }
-                    switch (button) {
-                        case "getHistoryInYear":
-                            list.add(new BarChartItem(chart.generateDataBar(Chart_id, BarEntries), getActivity(), "用電量 (度)", array, "kWh", "時間(月份)"));
+                    switch (time) {
+                        case "year":
+                            list.add(new BarChartItem(chart.generateDataBar(Chart_id, BarEntries), getActivity(), "", array, "kWh", "時間(月份)"));
                             break;
-                        case "getHistoryInMonth":
-                            list.add(new BarChartItem(chart.generateDataBar(Chart_id, BarEntries), getActivity(), "用電量 (度)", array, "kWh", "時間(日)"));
+                        case "month":
+                            list.add(new BarChartItem(chart.generateDataBar(Chart_id, BarEntries), getActivity(), "", array, "kWh", "時間(日)"));
                             break;
-                        case "getHistoryInDay":
-                            list.add(new BarChartItem(chart.generateDataBar(Chart_id, BarEntries), getActivity(), "用電量 (度)", array, "kWh", "時間(小時)"));
+                        case "day":
+                            list.add(new BarChartItem(chart.generateDataBar(Chart_id, BarEntries), getActivity(), "", array, "kWh", "時間(小時)"));
                             break;
-                        case "getHistoryInNow":
-                            list.add(new LineChartItem(chart.generateDataLine(Chart_id, LineEntries), getActivity(), "實功 (瓩)", array, "kW", "時間(分鐘)"));
+                        case "now":
+                            list.add(new LineChartItem(chart.generateDataLine(new String[]{Chart_id[0]}, LineEntries_ac), getActivity(), "", array, "kW", "時間(分鐘)"));
                             break;
                     }
                     ChartDataAdapter cda = new ChartDataAdapter(getActivity(), list);
@@ -744,7 +760,7 @@ public class IndexFragment_jun extends Fragment {
                 return "application/json";
             }
         };
-        requestQueue.add(postRequest);*/
+        requestQueue.add(postRequest);
     }
 
     private String setDateFormat(int year,int monthOfYear,int dayOfMonth){
