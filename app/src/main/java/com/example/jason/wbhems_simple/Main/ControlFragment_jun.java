@@ -502,7 +502,7 @@ public class ControlFragment_jun extends Fragment {
         final JSONObject body = new JSONObject();
         try {
             body.put("action", "setHemsAppliance");
-            body.put("field","92712");
+            body.put("field",User);
             body.put("mode","control");
             body.put("name",name);
             body.put("token",Token);
@@ -1348,7 +1348,7 @@ public class ControlFragment_jun extends Fragment {
         final JSONObject body = new JSONObject();
         try {
             body.put("action", "setHemsRoomHotKey");
-            body.put("field","92712");
+            body.put("field",User);
             body.put("id",id);
             body.put("switch",sw);
             body.put("token",Token);
@@ -1383,7 +1383,7 @@ public class ControlFragment_jun extends Fragment {
         final JSONObject body = new JSONObject();
         try {
             body.put("action","setHemsAppliance");
-            body.put("field","92712");
+            body.put("field",User);
             body.put("mode","control");
             body.put("name",name);
             body.put("setting","");
@@ -1422,7 +1422,7 @@ public class ControlFragment_jun extends Fragment {
         try {
             body.put("action", "setHemsRoomHotKey");
             body.put("auto_control","");
-            body.put("field","92712");
+            body.put("field",User);
             body.put("id",id);
             body.put("mode","hotkey");
             body.put("switch",sw);
@@ -1458,7 +1458,7 @@ public class ControlFragment_jun extends Fragment {
     private void setHemsApplianceByName(String name, String sw) {
         final JSONObject body = new JSONObject();
         try {
-            body.put("field","92702");
+            body.put("field",User);
             body.put("action", "setHemsAppliance");
             body.put("name",name);
             body.put("stting","");
@@ -1496,7 +1496,7 @@ public class ControlFragment_jun extends Fragment {
         final JSONObject body = new JSONObject();
         try {
             body.put("action", "setHemsRoomHotKey");
-            body.put("field","92702");
+            body.put("field",User);
             body.put("id",id);
             body.put("switch",sw);
             body.put("token",Token);
@@ -1537,7 +1537,7 @@ public class ControlFragment_jun extends Fragment {
         try {
             body.put("action", "setHemsRoomHotKey");
             body.put("auto_control",auto_control);
-            body.put("field","92702");
+            body.put("field",User);
             body.put("from_function","applianceControl");
             body.put("id",id);
             body.put("switch",sw);
