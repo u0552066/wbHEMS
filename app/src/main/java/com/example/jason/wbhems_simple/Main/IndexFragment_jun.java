@@ -644,15 +644,15 @@ public class IndexFragment_jun extends Fragment {
         String xUnit ="時間";
         try {
             for (int i = 0;i < 10;i++){
-                LinePower.add(new Entry(i, Float.parseFloat("1")));
-                array.add(new String("1"));
+                LinePower.add(new Entry(i, Float.parseFloat("0")));
+                array.add(new String("0"));
             }
             list.add(new LineChartItem(chart.generateDataLine(Chart_id, LinePower()), getActivity(), "用電量", Time(), "kWh", xUnit));
 
             ChartDataAdapter cda = new ChartDataAdapter(getActivity(), list);
             lv.setAdapter(cda);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.d("error_sample", String.valueOf(e));
         }
     }
 
@@ -678,7 +678,7 @@ public class IndexFragment_jun extends Fragment {
                     break;
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.d("getChart_1", String.valueOf(e));
         }
 
         postRequest = new StringRequest(Request.Method.POST, url_ami, new Response.Listener<String>() {
@@ -687,17 +687,18 @@ public class IndexFragment_jun extends Fragment {
                 // response
                 ArrayList<ChartItem> list = new ArrayList<ChartItem>();
                 ArrayList<BarEntry> BarEntries = new ArrayList<BarEntry>();
-                ArrayList<Entry> LineEntries_ac = new ArrayList<Entry>();
+                ArrayList<Entry> LineEntries = new ArrayList<Entry>();
                 ArrayList<String> array = new ArrayList<String>();
-                String[] Chart_id = {"空調","照明、風扇、排風扇","插座","總和"};
+                String[] Chart_id = {"空調"};
                 try {
                     Log.d("body", body.toString());
                     int num_date = 0;
                     JSONObject object = new JSONObject(response);
+                    Log.d("getChart_response",object.toString());
                     int num = object.getJSONArray("data").length(); // 總資料筆數
                     for(int i = 0; i<num; i++){
                         if(object.getJSONArray("data").getJSONObject(i).getString("name").equals("ac_1")){
-                            num_date = num_date+1; // 日期筆數
+                            num_date = num_date+1; // 日期筆數(x軸)
                         }
                     }
                     for(int j = 0; j<num_date; j++){
@@ -713,17 +714,23 @@ public class IndexFragment_jun extends Fragment {
                                 array.add(new String(Date)); // x軸:幾月/幾號
                                 break;
                             case "day":
-                                String date_hour = object.getJSONArray("data").getJSONObject(j).getString("month");
+                                String date_hour = object.getJSONArray("data").getJSONObject(j).getString("hour");
                                 array.add(new String(date_hour)); // x軸:幾時
+                                break;
+                            case "now":
+                                String date_hour1 = object.getJSONArray("data").getJSONObject(j).getString("hour");
+                                String date_min = object.getJSONArray("data").getJSONObject(j).getString("minute");
+                                String time = date_hour1+":"+date_min;
+                                array.add(new String(time)); // x軸:幾時:幾分
                                 break;
                         }
                     }
-                    Log.d("num", String.valueOf(num));
+                    Log.d("array_date", String.valueOf(array));
                     for (int i = 0;i < num;i++){
                         //String label = object.getJSONArray("label").getString(i);
-                        String power = object.getJSONArray("power").getString(i);
+                        String power = object.getJSONArray("data").getJSONObject(i).getString("total_kw");
                         BarEntries.add(new BarEntry(i, Float.parseFloat(power)));
-                        LineEntries_ac.add(new Entry(i, Float.parseFloat(power)));
+                        LineEntries.add(new Entry(i, Float.parseFloat(power)));
                         //array.add(new String(label));
                     }
                     switch (time) {
@@ -737,13 +744,14 @@ public class IndexFragment_jun extends Fragment {
                             list.add(new BarChartItem(chart.generateDataBar(Chart_id, BarEntries), getActivity(), "", array, "kWh", "時間(小時)"));
                             break;
                         case "now":
-                            list.add(new LineChartItem(chart.generateDataLine(new String[]{Chart_id[0]}, LineEntries_ac), getActivity(), "", array, "kW", "時間(分鐘)"));
+                            list.add(new LineChartItem(chart.generateDataLine(Chart_id, LineEntries), getActivity(), "", array, "kW", "時間(分鐘)"));
                             break;
                     }
                     ChartDataAdapter cda = new ChartDataAdapter(getActivity(), list);
                     lv.setAdapter(cda);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Log.e("Error_addData", String.valueOf(e));
                 }
             }
         }, new Response.ErrorListener() {
