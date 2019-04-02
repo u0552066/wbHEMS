@@ -694,25 +694,27 @@ public class IndexFragment_jun extends Fragment {
                     Log.d("body", body.toString());
                     int num_date = 0;
                     JSONObject object = new JSONObject(response);
-                    int num = object.getJSONArray("data").length();
+                    int num = object.getJSONArray("data").length(); // 總資料筆數
                     for(int i = 0; i<num; i++){
                         if(object.getJSONArray("data").getJSONObject(i).getString("name").equals("ac_1")){
-                            num_date = num_date+1;
+                            num_date = num_date+1; // 日期筆數
                         }
                     }
                     for(int j = 0; j<num_date; j++){
                         switch (time){
                             case "year":
                                 String date = object.getJSONArray("data").getJSONObject(j).getString("month");
-                                array.add(new String(date));
+                                array.add(new String(date)); // x軸:幾月
                                 break;
                             case "month":
                                 String date_month = object.getJSONArray("data").getJSONObject(j).getString("month");
                                 String date_day= object.getJSONArray("data").getJSONObject(j).getString("day");
                                 String Date = date_month+"/"+date_day;
-                                array.add(new String());
+                                array.add(new String(Date)); // x軸:幾月/幾號
                                 break;
                             case "day":
+                                String date_hour = object.getJSONArray("data").getJSONObject(j).getString("month");
+                                array.add(new String(date_hour)); // x軸:幾時
                                 break;
                         }
                     }

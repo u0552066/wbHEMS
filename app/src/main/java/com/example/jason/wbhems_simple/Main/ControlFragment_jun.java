@@ -64,6 +64,7 @@ public class ControlFragment_jun extends Fragment {
     private SharedPreferences setting;
     private SharedPreferences.Editor settingedit;
     String User,Token,IP,Port;
+    String exhaust_mode1;
     //---------
     private int acmode1 = 0, fanmode1 = 0, fanmode2 = 0, fanmode3 = 0, exhaustmode1 = 0;
     private LinearLayout LLqset, LLHqset, LLlight, LLHlight, LLac, LLHac,LLfan,LLHfan,LLexhaust,LLHexhaust;
@@ -313,7 +314,7 @@ public class ControlFragment_jun extends Fragment {
                     }
                     //----------- 排風扇
                     String sw_exhaust1 = data.getJSONArray("list").getJSONObject(8).getString("switch");
-                    String tv_exhaust1 = data.getJSONArray("list").getJSONObject(8).getString("setting");
+                    exhaust_mode1 = data.getJSONArray("list").getJSONObject(8).getString("setting");
                     if(sw_exhaust1.equals("1")){
                         exhaustmode1 = 1;
                         //tvExhaustMode_1.setText("电源 : 开");
@@ -325,7 +326,7 @@ public class ControlFragment_jun extends Fragment {
                         tvExhaustMode_1.setText("電源 : 關");
                         img_Exhaust_1.setImageResource(R.drawable.exhaust_off);
                     }
-                    switch(tv_exhaust1){
+                    switch(exhaust_mode1){
                         case "0":
                             tvExhaustWind_1.setText("風度：弱");
                             break;
@@ -574,7 +575,17 @@ public class ControlFragment_jun extends Fragment {
                 tvExhaustWind_1.setText("風度：強");
                 setApplianceByName_setting("air_ejector_fan_1","2");
                 closeAutoControl("air_ejector_fan_1-slider","0","auto_comfort");
-                action("ExhaustFan","4","2");
+                switch (exhaust_mode1){
+                    case "0": // 弱
+                        action("ExhaustFan","4","1");
+                        action("ExhaustFan","4","1");
+                        break;
+                    case "1": // 中
+                        action("ExhaustFan","4","1");
+                        break;
+                    case "2": // 強
+                        break;
+                }
             }
         });
         btn_ExhaustWind1_mid.setOnClickListener(new View.OnClickListener() {
@@ -584,7 +595,17 @@ public class ControlFragment_jun extends Fragment {
                 tvExhaustWind_1.setText("風度：中");
                 setApplianceByName_setting("air_ejector_fan_1","1");
                 closeAutoControl("air_ejector_fan_1-slider","0","auto_comfort");
-                action("ExhaustFan","4","3");
+                switch (exhaust_mode1){
+                    case "0": // 弱
+                        action("ExhaustFan","4","1");
+                        break;
+                    case "1": // 中
+                        break;
+                    case "2": // 強
+                        action("ExhaustFan","4","1");
+                        action("ExhaustFan","4","1");
+                        break;
+                }
             }
         });
         btn_ExhaustWind1_low.setOnClickListener(new View.OnClickListener() {
@@ -594,7 +615,17 @@ public class ControlFragment_jun extends Fragment {
                 tvExhaustWind_1.setText("風度：弱");
                 setApplianceByName_setting("air_ejector_fan_1","0");
                 closeAutoControl("air_ejector_fan_1-slider","0","auto_comfort");
-                action("ExhaustFan","4","4");
+                switch (exhaust_mode1){
+                    case "0": // 弱
+                        break;
+                    case "1": // 中
+                        action("ExhaustFan","4","1");
+                        action("ExhaustFan","4","1");
+                        break;
+                    case "2": // 強
+                        action("ExhaustFan","4","1");
+                        break;
+                }
             }
         });
     }
@@ -699,18 +730,21 @@ public class ControlFragment_jun extends Fragment {
             @Override
             public void onClick(View v) {
                 setFan_turn("fan_1");
+                action("Fan","7","5");
             }
         });
         btn_Turn_2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFan_turn("fan_2");
+                action("Fan","8","5");
             }
         });
         btn_Turn_3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFan_turn("fan_1");
+                action("Fan","9","5");
             }
         });
         //風扇風度

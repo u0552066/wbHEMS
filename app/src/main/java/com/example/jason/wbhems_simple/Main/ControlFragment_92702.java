@@ -60,6 +60,8 @@ public class ControlFragment_92702 extends Fragment {
     private SharedPreferences setting;
     private SharedPreferences.Editor settingedit;
     String User,Token,IP,Port;
+    String fan_mode1,fan_mode2,fan_mode3,fan_mode4,fan_mode5,fan_mode6; // 風扇目前風速紀錄
+    String exhaust_mode1,exhaust_mode2; // 排風扇風速紀錄
     //---------
     private int acmode1 = 0, acmode2 = 0, acmodeEL = 0, fanmode1 = 0, fanmode2 = 0, fanmode3 = 0, fanmode4 = 0, fanmode5 = 0, fanmode6 = 0, exhaustmode1 = 0, exhaustmode2 = 0, plugmode1 = 0;
     private LinearLayout LLqset, LLHqset, LLlight, LLHlight, LLac, LLHac,LLfan,LLHfan,LLexhaust,LLHexhaust,LLplug,LLHplug;
@@ -364,12 +366,12 @@ public class ControlFragment_92702 extends Fragment {
                     String sw_fan4 = data.getJSONArray("list").getJSONObject(11).getString("switch");
                     String sw_fan5 = data.getJSONArray("list").getJSONObject(12).getString("switch");
                     String sw_fan6 = data.getJSONArray("list").getJSONObject(15).getString("switch");
-                    String tv_mode1 = data.getJSONArray("list").getJSONObject(8).getString("setting");
-                    String tv_mode2 = data.getJSONArray("list").getJSONObject(9).getString("setting");
-                    String tv_mode3 = data.getJSONArray("list").getJSONObject(10).getString("setting");
-                    String tv_mode4 = data.getJSONArray("list").getJSONObject(11).getString("setting");
-                    String tv_mode5 = data.getJSONArray("list").getJSONObject(12).getString("setting");
-                    String tv_mode6 = data.getJSONArray("list").getJSONObject(15).getString("setting");
+                    fan_mode1 = data.getJSONArray("list").getJSONObject(8).getString("setting");
+                    fan_mode2 = data.getJSONArray("list").getJSONObject(9).getString("setting");
+                    fan_mode3 = data.getJSONArray("list").getJSONObject(10).getString("setting");
+                    fan_mode4 = data.getJSONArray("list").getJSONObject(11).getString("setting");
+                    fan_mode5 = data.getJSONArray("list").getJSONObject(12).getString("setting");
+                    fan_mode6 = data.getJSONArray("list").getJSONObject(15).getString("setting");
                     if(sw_fan1.equals("1")){
                         fanmode1 = 1;
                         tvFanMode_1.setText("電源 : 開");
@@ -424,7 +426,7 @@ public class ControlFragment_92702 extends Fragment {
                         tvFanMode_6.setText("電源 : 關");
                         img_Fan_6.setImageResource(R.drawable.fan_off);
                     }
-                    switch(tv_mode1){
+                    switch(fan_mode1){
                         case "0":
                             tvFanWind_1.setText("風度：弱");
                             break;
@@ -435,7 +437,7 @@ public class ControlFragment_92702 extends Fragment {
                             tvFanWind_1.setText("風度：強");
                             break;
                     }
-                    switch(tv_mode2){
+                    switch(fan_mode2){
                         case "0":
                             tvFanWind_2.setText("風度：弱");
                             break;
@@ -446,7 +448,7 @@ public class ControlFragment_92702 extends Fragment {
                             tvFanWind_2.setText("風度：強");
                             break;
                     }
-                    switch(tv_mode3){
+                    switch(fan_mode3){
                         case "0":
                             tvFanWind_3.setText("風度：弱");
                             break;
@@ -457,7 +459,7 @@ public class ControlFragment_92702 extends Fragment {
                             tvFanWind_3.setText("風度：強");
                             break;
                     }
-                    switch(tv_mode4){
+                    switch(fan_mode4){
                         case "0":
                             tvFanWind_4.setText("風度：弱");
                             break;
@@ -468,7 +470,7 @@ public class ControlFragment_92702 extends Fragment {
                             tvFanWind_4.setText("風度：強");
                             break;
                     }
-                    switch(tv_mode5){
+                    switch(fan_mode5){
                         case "0":
                             tvFanWind_5.setText("風度：弱");
                             break;
@@ -479,7 +481,7 @@ public class ControlFragment_92702 extends Fragment {
                             tvFanWind_5.setText("風度：強");
                             break;
                     }
-                    switch(tv_mode6){
+                    switch(fan_mode6){
                         case "0":
                             tvFanWind_6.setText("風度：弱");
                             break;
@@ -494,8 +496,8 @@ public class ControlFragment_92702 extends Fragment {
                     //----------- 排風扇
                     String sw_exhaust1 = data.getJSONArray("list").getJSONObject(13).getString("switch");
                     String sw_exhaust2 = data.getJSONArray("list").getJSONObject(14).getString("switch");
-                    String tv_exhaust1 = data.getJSONArray("list").getJSONObject(13).getString("setting");
-                    String tv_exhaust2 = data.getJSONArray("list").getJSONObject(14).getString("setting");
+                    exhaust_mode1 = data.getJSONArray("list").getJSONObject(13).getString("setting");
+                    exhaust_mode2 = data.getJSONArray("list").getJSONObject(14).getString("setting");
                     if(sw_exhaust1.equals("1")){
                         exhaustmode1 = 1;
                         //tvExhaustMode_1.setText("电源 : 开");
@@ -518,7 +520,7 @@ public class ControlFragment_92702 extends Fragment {
                         tvExhaustMode_2.setText("電源 : 關");
                         img_Exhaust_2.setImageResource(R.drawable.exhaust_off);
                     }
-                    switch(tv_exhaust1){
+                    switch(exhaust_mode1){
                         case "0":
                             tvExhaustWind_1.setText("風度：弱");
                             break;
@@ -526,7 +528,7 @@ public class ControlFragment_92702 extends Fragment {
                             tvExhaustWind_1.setText("風度：強");
                             break;
                     }
-                    switch(tv_exhaust2){
+                    switch(exhaust_mode2){
                         case "0":
                             tvExhaustWind_2.setText("風度：弱");
                             break;
@@ -841,7 +843,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvExhaustWind_1.setText("風度：強");
                 setApplianceByName_setting("air_ejector_fan_1","2");
                 closeAutoControl("air_ejector_fan_1-slider","0","auto_comfort_1");
-                action("ExhaustFan","1","4");
+                switch (exhaust_mode1){
+                    case "0": // 弱
+                        action("ExhaustFan","1","1");
+                        action("ExhaustFan","1","1");
+                        break;
+                    case "1": // 中
+                        action("ExhaustFan","1","1");
+                        break;
+                    case "2": // 強
+                        break;
+                }
             }
         });
         btn_ExhaustWind1_mid.setOnClickListener(new View.OnClickListener() {
@@ -851,7 +863,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvExhaustWind_1.setText("風度：中");
                 setApplianceByName_setting("air_ejector_fan_1","1");
                 closeAutoControl("air_ejector_fan_1-slider","0","auto_comfort_1");
-                action("ExhaustFan","1","3");
+                switch (exhaust_mode1){
+                    case "0": // 弱
+                        action("ExhaustFan","1","1");
+                        break;
+                    case "1": // 中
+                        break;
+                    case "2": // 強
+                        action("ExhaustFan","1","1");
+                        action("ExhaustFan","1","1");
+                        break;
+                }
             }
         });
         btn_ExhaustWind1_low.setOnClickListener(new View.OnClickListener() {
@@ -861,7 +883,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvExhaustWind_1.setText("風度：弱");
                 setApplianceByName_setting("air_ejector_fan_1","0");
                 closeAutoControl("air_ejector_fan_1-slider","0","auto_comfort_1");
-                action("ExhaustFan","1","2");
+                switch (exhaust_mode1){
+                    case "0": // 弱
+                        break;
+                    case "1": // 中
+                        action("ExhaustFan","1","1");
+                        action("ExhaustFan","1","1");
+                        break;
+                    case "2": // 強
+                        action("ExhaustFan","1","1");
+                        break;
+                }
             }
         });
         btn_ExhaustWind2_high.setOnClickListener(new View.OnClickListener() {
@@ -871,7 +903,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvExhaustWind_2.setText("風度：強");
                 setApplianceByName_setting("air_ejector_fan_2","2");
                 closeAutoControl("air_ejector_fan_2-slider","0","auto_comfort_2");
-                action("ExhaustFan","2","4");
+                switch (exhaust_mode2){
+                    case "0": // 弱
+                        action("ExhaustFan","2","1");
+                        action("ExhaustFan","2","1");
+                        break;
+                    case "1": // 中
+                        action("ExhaustFan","2","1");
+                        break;
+                    case "2": // 強
+                        break;
+                }
             }
         });
         btn_ExhaustWind2_mid.setOnClickListener(new View.OnClickListener() {
@@ -881,7 +923,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvExhaustWind_2.setText("風度：中");
                 setApplianceByName_setting("air_ejector_fan_2","1");
                 closeAutoControl("air_ejector_fan_2-slider","0","auto_comfort_2");
-                action("ExhaustFan","2","3");
+                switch (exhaust_mode2){
+                    case "0": // 弱
+                        action("ExhaustFan","2","1");
+                        break;
+                    case "1": // 中
+                        break;
+                    case "2": // 強
+                        action("ExhaustFan","2","1");
+                        action("ExhaustFan","2","1");
+                        break;
+                }
             }
         });
         btn_ExhaustWind2_low.setOnClickListener(new View.OnClickListener() {
@@ -891,7 +943,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvExhaustWind_2.setText("風度：弱");
                 setApplianceByName_setting("air_ejector_fan_2","0");
                 closeAutoControl("air_ejector_fan_2-slider","0","auto_comfort_2");
-                action("ExhaustFan","2","2");
+                switch (exhaust_mode2){
+                    case "0": // 弱
+                        break;
+                    case "1": // 中
+                        action("ExhaustFan","2","1");
+                        action("ExhaustFan","2","1");
+                        break;
+                    case "2": // 強
+                        action("ExhaustFan","2","1");
+                        break;
+                }
             }
         });
 
@@ -1090,36 +1152,45 @@ public class ControlFragment_92702 extends Fragment {
             @Override
             public void onClick(View v) {
                 setFan_turn("fan_1");
+                closeAutoControl("fan_1-status-button","0","auto_comfort_2");
+                action("Fan","1","5");
+
             }
         });
         btn_Turn_2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFan_turn("fan_2");
+                closeAutoControl("fan_2-status-button","0","auto_comfort_2");
+                action("Fan","2","5");
             }
         });
         btn_Turn_3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFan_turn("fan_3");
+                action("Fan","3","5");
             }
         });
         btn_Turn_4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFan_turn("fan_4");
+                action("Fan","4","5");
             }
         });
         btn_Turn_5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFan_turn("fan_5");
+                action("Fan","5","5");
             }
         });
         btn_Turn_6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFan_turn("fan_6");
+                action("Fan","10","5");
             }
         });
         //風扇風度
@@ -1130,7 +1201,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_1.setText("風度：強");
                 setApplianceByName_setting("fan_1","2");
                 closeAutoControl("fan_1-slider","0","auto_comfort_2");
-                action("Fan","1","4");
+                switch (fan_mode1){
+                    case "0": // 弱
+                        action("Fan","1","1");
+                        action("Fan","1","1");
+                        break;
+                    case "1": // 中
+                        action("Fan","1","1");
+                        break;
+                    case "2": // 強
+                        break;
+                }
             }
         });
         btn_FanWind1_mid.setOnClickListener(new View.OnClickListener() {
@@ -1140,7 +1221,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_1.setText("風度：中");
                 setApplianceByName_setting("fan_1","1");
                 closeAutoControl("fan_1-slider","0","auto_comfort_2");
-                action("Fan","1","3");
+                switch (fan_mode1){
+                    case "0": // 弱
+                        action("Fan","1","1");
+                        break;
+                    case "1": // 中
+                        break;
+                    case "2": // 強
+                        action("Fan","1","1");
+                        action("Fan","1","1");
+                        break;
+                }
             }
         });
         btn_FanWind1_low.setOnClickListener(new View.OnClickListener() {
@@ -1150,7 +1241,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_1.setText("風度：弱");
                 setApplianceByName_setting("fan_1","0");
                 closeAutoControl("fan_1-slider","0","auto_comfort_2");
-                action("Fan","1","2");
+                switch (fan_mode1){
+                    case "0": // 弱
+                        break;
+                    case "1": // 中
+                        action("Fan","1","1");
+                        action("Fan","1","1");
+                        break;
+                    case "2": // 強
+                        action("Fan","1","1");
+                        break;
+                }
             }
         });
         btn_FanWind2_high.setOnClickListener(new View.OnClickListener() {
@@ -1160,7 +1261,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_2.setText("風度：強");
                 setApplianceByName_setting("fan_2","2");
                 closeAutoControl("fan_2-slider","0","auto_comfort_2");
-                action("Fan","2","4");
+                switch (fan_mode2){
+                    case "0": // 弱
+                        action("Fan","2","1");
+                        action("Fan","2","1");
+                        break;
+                    case "1": // 中
+                        action("Fan","2","1");
+                        break;
+                    case "2": // 強
+                        break;
+                }
             }
         });
         btn_FanWind2_mid.setOnClickListener(new View.OnClickListener() {
@@ -1170,7 +1281,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_2.setText("風度：中");
                 setApplianceByName_setting("fan_2","1");
                 closeAutoControl("fan_2-slider","0","auto_comfort_2");
-                action("Fan","2","3");
+                switch (fan_mode2){
+                    case "0": // 弱
+                        action("Fan","2","1");
+                        break;
+                    case "1": // 中
+                        break;
+                    case "2": // 強
+                        action("Fan","2","1");
+                        action("Fan","2","1");
+                        break;
+                }
             }
         });
         btn_FanWind2_low.setOnClickListener(new View.OnClickListener() {
@@ -1180,7 +1301,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_2.setText("風度：弱");
                 setApplianceByName_setting("fan_2","0");
                 closeAutoControl("fan_2-slider","0","auto_comfort_2");
-                action("Fan","2","2");
+                switch (fan_mode2){
+                    case "0": // 弱
+                        break;
+                    case "1": // 中
+                        action("Fan","2","1");
+                        action("Fan","2","1");
+                        break;
+                    case "2": // 強
+                        action("Fan","2","1");
+                        break;
+                }
             }
         });
         btn_FanWind3_high.setOnClickListener(new View.OnClickListener() {
@@ -1190,7 +1321,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_3.setText("風度：強");
                 setApplianceByName_setting("fan_3","2");
                 closeAutoControl("fan_3-slider","0","auto_comfort_2");
-                action("Fan","3","4");
+                switch (fan_mode3){
+                    case "0": // 弱
+                        action("Fan","3","1");
+                        action("Fan","3","1");
+                        break;
+                    case "1": // 中
+                        action("Fan","3","1");
+                        break;
+                    case "2": // 強
+                        break;
+                }
             }
         });
         btn_FanWind3_mid.setOnClickListener(new View.OnClickListener() {
@@ -1200,7 +1341,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_3.setText("風度：中");
                 setApplianceByName_setting("fan_3","1");
                 closeAutoControl("fan_3-slider","0","auto_comfort_2");
-                action("Fan","3","3");
+                switch (fan_mode3){
+                    case "0": // 弱
+                        action("Fan","3","1");
+                        break;
+                    case "1": // 中
+                        break;
+                    case "2": // 強
+                        action("Fan","3","1");
+                        action("Fan","3","1");
+                        break;
+                }
             }
         });
         btn_FanWind3_low.setOnClickListener(new View.OnClickListener() {
@@ -1210,7 +1361,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_3.setText("風度：弱");
                 setApplianceByName_setting("fan_3","0");
                 closeAutoControl("fan_3-slider","0","auto_comfort_2");
-                action("Fan","3","2");
+                switch (fan_mode3){
+                    case "0": // 弱
+                        break;
+                    case "1": // 中
+                        action("Fan","3","1");
+                        action("Fan","3","1");
+                        break;
+                    case "2": // 強
+                        action("Fan","3","1");
+                        break;
+                }
             }
         });
         btn_FanWind4_high.setOnClickListener(new View.OnClickListener() {
@@ -1220,7 +1381,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_4.setText("風度：強");
                 setApplianceByName_setting("fan_4","2");
                 closeAutoControl("fan_4-slider","0","auto_comfort_2");
-                action("Fan","4","4");
+                switch (fan_mode4){
+                    case "0": // 弱
+                        action("Fan","4","1");
+                        action("Fan","4","1");
+                        break;
+                    case "1": // 中
+                        action("Fan","4","1");
+                        break;
+                    case "2": // 強
+                        break;
+                }
             }
         });
         btn_FanWind4_mid.setOnClickListener(new View.OnClickListener() {
@@ -1230,7 +1401,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_4.setText("風度：中");
                 setApplianceByName_setting("fan_4","1");
                 closeAutoControl("fan_4-slider","0","auto_comfort_2");
-                action("Fan","4","3");
+                switch (fan_mode4){
+                    case "0": // 弱
+                        action("Fan","4","1");
+                        break;
+                    case "1": // 中
+                        break;
+                    case "2": // 強
+                        action("Fan","4","1");
+                        action("Fan","4","1");
+                        break;
+                }
             }
         });
         btn_FanWind4_low.setOnClickListener(new View.OnClickListener() {
@@ -1240,7 +1421,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_4.setText("風度：弱");
                 setApplianceByName_setting("fan_4","0");
                 closeAutoControl("fan_4-slider","0","auto_comfort_2");
-                action("Fan","4","2");
+                switch (fan_mode4){
+                    case "0": // 弱
+                        break;
+                    case "1": // 中
+                        action("Fan","4","1");
+                        action("Fan","4","1");
+                        break;
+                    case "2": // 強
+                        action("Fan","4","1");
+                        break;
+                }
             }
         });
         btn_FanWind5_high.setOnClickListener(new View.OnClickListener() {
@@ -1250,7 +1441,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_5.setText("風度：強");
                 setApplianceByName_setting("fan_5","2");
                 closeAutoControl("fan_5-slider","0","auto_comfort_1");
-                action("Fan","5","4");
+                switch (fan_mode5){
+                    case "0": // 弱
+                        action("Fan","5","1");
+                        action("Fan","5","1");
+                        break;
+                    case "1": // 中
+                        action("Fan","5","1");
+                        break;
+                    case "2": // 強
+                        break;
+                }
             }
         });
         btn_FanWind5_mid.setOnClickListener(new View.OnClickListener() {
@@ -1260,7 +1461,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_5.setText("風度：中");
                 setApplianceByName_setting("fan_5","1");
                 closeAutoControl("fan_5-slider","0","auto_comfort_1");
-                action("Fan","5","3");
+                switch (fan_mode5){
+                    case "0": // 弱
+                        action("Fan","5","1");
+                        break;
+                    case "1": // 中
+                        break;
+                    case "2": // 強
+                        action("Fan","5","1");
+                        action("Fan","5","1");
+                        break;
+                }
             }
         });
         btn_FanWind5_low.setOnClickListener(new View.OnClickListener() {
@@ -1270,7 +1481,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_5.setText("風度：弱");
                 setApplianceByName_setting("fan_5","0");
                 closeAutoControl("fan_5-slider","0","auto_comfort_1");
-                action("Fan","5","2");
+                switch (fan_mode5){
+                    case "0": // 弱
+                        break;
+                    case "1": // 中
+                        action("Fan","5","1");
+                        action("Fan","5","1");
+                        break;
+                    case "2": // 強
+                        action("Fan","5","1");
+                        break;
+                }
             }
         });
         btn_FanWind6_high.setOnClickListener(new View.OnClickListener() {
@@ -1280,7 +1501,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_6.setText("風度：強");
                 setApplianceByName_setting("fan_6","2");
                 closeAutoControl("fan_6-slider","0","auto_comfort_2");
-                action("Fan","10","4");
+                switch (fan_mode6){
+                    case "0": // 弱
+                        action("Fan","10","1");
+                        action("Fan","10","1");
+                        break;
+                    case "1": // 中
+                        action("Fan","10","1");
+                        break;
+                    case "2": // 強
+                        break;
+                }
             }
         });
         btn_FanWind6_mid.setOnClickListener(new View.OnClickListener() {
@@ -1290,7 +1521,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_6.setText("風度：中");
                 setApplianceByName_setting("fan_6","1");
                 closeAutoControl("fan_6-slider","0","auto_comfort_2");
-                action("Fan","10","3");
+                switch (fan_mode6){
+                    case "0": // 弱
+                        action("Fan","10","1");
+                        break;
+                    case "1": // 中
+                        break;
+                    case "2": // 強
+                        action("Fan","10","1");
+                        action("Fan","10","1");
+                        break;
+                }
             }
         });
         btn_FanWind6_low.setOnClickListener(new View.OnClickListener() {
@@ -1300,7 +1541,17 @@ public class ControlFragment_92702 extends Fragment {
                 tvFanWind_6.setText("風度：弱");
                 setApplianceByName_setting("fan_6","0");
                 closeAutoControl("fan_6-slider","0","auto_comfort_2");
-                action("Fan","10","2");
+                switch (fan_mode6){
+                    case "0": // 弱
+                        break;
+                    case "1": // 中
+                        action("Fan","10","1");
+                        action("Fan","10","1");
+                        break;
+                    case "2": // 強
+                        action("Fan","10","1");
+                        break;
+                }
             }
         });
 
@@ -1390,7 +1641,7 @@ public class ControlFragment_92702 extends Fragment {
                     tvAcMode_EL.setText("電源 : 開");
                     img_Ac_EL.setImageResource(R.drawable.air_conditioner_on);
                     setApplianceByName_switch("ac_3","1");
-                    closeAutoControl("ac_3-button","0","auto_comfort_3");
+                    closeAutoControl("ac_3-button","0","");
                     action("","","1"); // EL　ＡC
                 }
                 else{
@@ -1399,7 +1650,7 @@ public class ControlFragment_92702 extends Fragment {
                     tvAcMode_EL.setText("電源 : 關");
                     img_Ac_EL.setImageResource(R.drawable.air_conditioner_off);
                     setApplianceByName_switch("ac_3","0");
-                    closeAutoControl("ac_3-button","0","auto_comfort_3");
+                    closeAutoControl("ac_3-button","0","");
                     action("","","0"); // EL　ＡC
                 }
             }
@@ -1471,7 +1722,7 @@ public class ControlFragment_92702 extends Fragment {
                 //tvAcFeatures_EL.setText("模式：冷气");
                 tvAcFeatures_EL.setText("模式：冷氣");
                 setApplianceByName_setting("ac_3",tv_tempEL);
-                closeAutoControl("ac_3-status-button","0","auto_comfort_3");
+                closeAutoControl("ac_3-status-button","0","");
                 action("","",tv_tempEL); // EL　ＡC
             }
         });
@@ -1481,7 +1732,7 @@ public class ControlFragment_92702 extends Fragment {
                 //tvAcFeatures_EL.setText("模式：除湿");
                 tvAcFeatures_EL.setText("模式：除溼");
                 setApplianceByName_setting("ac_3","1");
-                closeAutoControl("ac_3-status-button","0","auto_comfort_3");
+                closeAutoControl("ac_3-status-button","0","");
                 action("","","3"); // EL　ＡC
             }
         });
@@ -1491,7 +1742,7 @@ public class ControlFragment_92702 extends Fragment {
                 //tvAcFeatures_EL.setText("模式：送风");
                 tvAcFeatures_EL.setText("模式：送風");
                 setApplianceByName_setting("ac_3","0");
-                closeAutoControl("ac_3-status-button","0","auto_comfort_3");
+                closeAutoControl("ac_3-status-button","0","");
                 action("","","2"); // EL　ＡC
             }
         });
@@ -1540,7 +1791,7 @@ public class ControlFragment_92702 extends Fragment {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 setApplianceByName_setting("ac_3",tv_tempEL);
-                closeAutoControl("ac_3-slider","0","auto_comfort_3");
+                closeAutoControl("ac_3-slider","0","");
                 action("","",tv_tempEL); // EL　ＡC
             }
         });
