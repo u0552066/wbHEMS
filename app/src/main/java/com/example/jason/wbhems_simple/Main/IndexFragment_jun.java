@@ -689,7 +689,7 @@ public class IndexFragment_jun extends Fragment {
                 ArrayList<BarEntry> BarEntries = new ArrayList<BarEntry>();
                 ArrayList<Entry> LineEntries = new ArrayList<Entry>();
                 ArrayList<String> array = new ArrayList<String>();
-                String[] Chart_id = {"空調"};
+                String[] Chart_id = {"總和"};
                 try {
                     Log.d("body", body.toString());
                     int num_date = 0;
@@ -728,7 +728,7 @@ public class IndexFragment_jun extends Fragment {
                     Log.d("array_date", String.valueOf(array));
                     for (int i = 0;i < num;i++){
                         //String label = object.getJSONArray("label").getString(i);
-                        String power = object.getJSONArray("data").getJSONObject(i).getString("total_kw");
+                        String power = object.getJSONArray("data").getJSONObject(i).getString("total_kw"); // 總和
                         BarEntries.add(new BarEntry(i, Float.parseFloat(power)));
                         LineEntries.add(new Entry(i, Float.parseFloat(power)));
                         //array.add(new String(label));
