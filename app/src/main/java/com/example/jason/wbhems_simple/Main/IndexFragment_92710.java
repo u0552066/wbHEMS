@@ -135,19 +135,19 @@ public class IndexFragment_92710 extends Fragment {
         getDREvents();
         //宣告Timer
         timer =new Timer();
+        MyTask task = new MyTask();
         //設定Timer(task為執行內容，0代表立刻開始,間格5秒執行一次)
         timer.schedule(task, 0,5000);
     }
-    private TimerTask task = new TimerTask(){
+    class MyTask extends TimerTask{
         @Override
-        public void run() {
+        public void run(){
             // TODO Auto-generated method stub
             getSensor(); // 室內資訊
             getGeneral(); // 天氣資訊and電費
             getPower(); // 取得及時用電資料
         }
-
-    };
+    }
     private void getGeneral() {
         final JSONObject body = new JSONObject();
         try {
@@ -257,7 +257,7 @@ public class IndexFragment_92710 extends Fragment {
         try {
             body.put("action", "getHemsSensor");
             body.put("field","92710");
-            body.put("token","mDSbpZrRXACEsBE8WR34");
+            body.put("token",Token);
         } catch (JSONException e) {
             e.printStackTrace();
         }

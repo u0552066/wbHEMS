@@ -40,6 +40,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -90,7 +92,7 @@ public class ControlFragment_92702 extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private Timer timer;
     public ControlFragment_92702() {
         // Required empty public constructor
     }
@@ -140,52 +142,26 @@ public class ControlFragment_92702 extends Fragment {
         settingedit = setting.edit();
         img_findViewById();
         sw_findViewById();
-        light_findViewById();
-        ac_findViewById();
-        fan_findViewById();
-        exhaust_findViewById();
-        getRoom(); // 快速操作API
-        getPlug(); //抓插座API
-        getHemsApplianceByName(); //抓各電器設備API
-        //智慧插座
-        tvPlugMode_1 = getView().findViewById(R.id.tv_plugmode_1);
-        tvPlugPower_1 = getView().findViewById(R.id.tv_plugpower_1);
-        btn_Plug_1 = getView().findViewById(R.id.btn_plug_1);
-        btn_Plugtime_1 = getView().findViewById(R.id.btn_plugtime_1);
-        img_Plug_1 = getView().findViewById(R.id.img_plug_1);
-        btn_Plug_1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(plugmode1 == 0){
-                    plugmode1 = 1;
-                    //tvPlugMode_1.setText("电源 : 开");
-                    tvPlugMode_1.setText("電源 : 開");
-                    img_Plug_1.setImageResource(R.drawable.plug_on);
-                    setPlugStatus(plugmode1,"006");
-                    getPlug();
-                }
-                else{
-                    plugmode1 = 0;
-                    //tvPlugMode_1.setText("电源 : 关");
-                    tvPlugMode_1.setText("電源 : 關");
-                    img_Plug_1.setImageResource(R.drawable.plug_off);
-                    setPlugStatus(plugmode1,"006");
-                    getPlug();
-                }
-            }
-        });
-        btn_Plugtime_1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                Intent intent = new Intent(getActivity(), activity_schedule.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
-        
+        light_findViewById();//燈光
+        ac_findViewById();//空調
+        fan_findViewById();//風扇
+        exhaust_findViewById();//排風扇
+        plug_findViewById();//插座
+        //宣告Timer
+        timer = new Timer();
+        MyTask task = new MyTask();
+        //設定Timer(task為執行內容，0代表立刻開始,間格3秒執行一次)
+        timer.schedule(task, 0,3000);
     }
-
+    class MyTask extends TimerTask {
+        @Override
+        public void run(){
+            // TODO Auto-generated method stub
+            getRoom(); // 快速操作API
+            getPlug(); //抓插座API
+            getHemsApplianceByName(); //抓各電器設備API
+        }
+    }
     private void getHemsApplianceByName() {
         final JSONObject body = new JSONObject();
         try {
@@ -771,7 +747,6 @@ public class ControlFragment_92702 extends Fragment {
         };
         requestQueue.add(postRequest);
     }
-
     //排風扇
     private void exhaust_findViewById() {
         img_Exhaust_1 = getView().findViewById(R.id.img_exhaust_1);
@@ -2036,6 +2011,44 @@ public class ControlFragment_92702 extends Fragment {
                 setApplianceByName_setting("light_6",tv_lux6);
                 closeAutoControl("light_6-slider","0","auto_dimming_1");
                 action("DimmerControl","70",tv_lux6);
+            }
+        });
+    }
+    //插座
+    private void plug_findViewById(){
+        tvPlugMode_1 = getView().findViewById(R.id.tv_plugmode_1);
+        tvPlugPower_1 = getView().findViewById(R.id.tv_plugpower_1);
+        btn_Plug_1 = getView().findViewById(R.id.btn_plug_1);
+        btn_Plugtime_1 = getView().findViewById(R.id.btn_plugtime_1);
+        img_Plug_1 = getView().findViewById(R.id.img_plug_1);
+        btn_Plug_1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(plugmode1 == 0){
+                    plugmode1 = 1;
+                    //tvPlugMode_1.setText("电源 : 开");
+                    tvPlugMode_1.setText("電源 : 開");
+                    img_Plug_1.setImageResource(R.drawable.plug_on);
+                    setPlugStatus(plugmode1,"006");
+                    getPlug();
+                }
+                else{
+                    plugmode1 = 0;
+                    //tvPlugMode_1.setText("电源 : 关");
+                    tvPlugMode_1.setText("電源 : 關");
+                    img_Plug_1.setImageResource(R.drawable.plug_off);
+                    setPlugStatus(plugmode1,"006");
+                    getPlug();
+                }
+            }
+        });
+        btn_Plugtime_1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                Intent intent = new Intent(getActivity(), activity_schedule.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
     }

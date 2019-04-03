@@ -750,7 +750,7 @@
                     android:layout_margin="2dp"
                     android:orientation="vertical"
                     android:background="#FFFFFF"
-                    android:visibility="gone">
+                    android:visibility="visible">
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
@@ -766,7 +766,7 @@
                             android:layout_weight="1"
                             android:layout_margin="5dp"
                             android:background="@drawable/button_rounde"
-                            android:text="即时"/>
+                            android:text="即時"/>
                         <Button
                             android:id="@+id/btn_day"
                             android:layout_width="0dp"
@@ -793,8 +793,12 @@
                             android:text="年"/>
                         <EditText
                             android:id="@+id/tv_time"
+                            android:layout_marginLeft="5dp"
+                            android:layout_gravity="center"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="35dp"
+                            android:background="@drawable/button_shape1"
+                            android:gravity="center"
                             android:layout_weight="3"/>
                         <TextView
                             android:layout_width="0dp"

@@ -136,10 +136,20 @@ public class IndexFragment_jun extends Fragment {
         getDREvents();
         //宣告Timer
         timer =new Timer();
+        MyTask task = new MyTask();
         //設定Timer(task為執行內容，0代表立刻開始,間格5秒執行一次)
-        timer.schedule(task, 0,5000);
+        timer.schedule(task, 0,500000);
     }
-    private TimerTask task = new TimerTask(){
+    class MyTask extends TimerTask{
+        @Override
+        public void run(){
+            // TODO Auto-generated method stub
+            getSensor(); // 室內資訊
+            getGeneral(); // 天氣資訊and電費
+            getPower(); // 取得及時用電資料
+        }
+    }
+    /*private TimerTask task = new TimerTask(){
         @Override
         public void run() {
             // TODO Auto-generated method stub
@@ -148,7 +158,7 @@ public class IndexFragment_jun extends Fragment {
             getPower(); // 取得及時用電資料
         }
 
-    };
+    };*/
     private void getGeneral() {
         final JSONObject body = new JSONObject();
         try {
@@ -628,14 +638,6 @@ public class IndexFragment_jun extends Fragment {
         return m;
     }
 
-    private ArrayList<Entry> LinePower() {
-        ArrayList<Entry> m = new ArrayList<Entry>();
-        for (int i = 0; i < 10; i++){
-            m.add(new Entry(i, Float.parseFloat("1")));
-        }
-        return m;
-    }
-
     public void sample() {
         ArrayList<ChartItem> list = new ArrayList<ChartItem>();
         ArrayList<Entry> LinePower = new ArrayList<Entry>();
@@ -644,10 +646,10 @@ public class IndexFragment_jun extends Fragment {
         String xUnit ="時間";
         try {
             for (int i = 0;i < 10;i++){
-                LinePower.add(new Entry(i, Float.parseFloat("0")));
+                LinePower.add(new Entry(i, Float.parseFloat("2")));
                 array.add(new String("0"));
             }
-            list.add(new LineChartItem(chart.generateDataLine(Chart_id, LinePower()), getActivity(), "用電量", Time(), "kWh", xUnit));
+            list.add(new LineChartItem(chart.generateDataLine(Chart_id, LinePower), getActivity(), "用電量", Time(), "kWh", xUnit));
 
             ChartDataAdapter cda = new ChartDataAdapter(getActivity(), list);
             lv.setAdapter(cda);
@@ -684,54 +686,63 @@ public class IndexFragment_jun extends Fragment {
         postRequest = new StringRequest(Request.Method.POST, url_ami, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                // response
                 ArrayList<ChartItem> list = new ArrayList<ChartItem>();
                 ArrayList<BarEntry> BarEntries = new ArrayList<BarEntry>();
                 ArrayList<Entry> LineEntries = new ArrayList<Entry>();
                 ArrayList<String> array = new ArrayList<String>();
-                String[] Chart_id = {"總和"};
+                String[] Chart_id = {"空調"};
                 try {
                     Log.d("body", body.toString());
                     int num_date = 0;
                     JSONObject object = new JSONObject(response);
                     Log.d("getChart_response",object.toString());
-                    int num = object.getJSONArray("data").length(); // 總資料筆數
+                    JSONArray data = object.getJSONArray("data");
+                    int num = data.length(); // 總資料筆數
                     for(int i = 0; i<num; i++){
-                        if(object.getJSONArray("data").getJSONObject(i).getString("name").equals("ac_1")){
+                        if(data.getJSONObject(i).getString("name").equals("ac_1")){
                             num_date = num_date+1; // 日期筆數(x軸)
                         }
                     }
-                    for(int j = 0; j<num_date; j++){
+                    Log.d("Num_Date", String.valueOf(num_date));
+                    for(int j = 0; j<num; j++){
                         switch (time){
                             case "year":
-                                String date = object.getJSONArray("data").getJSONObject(j).getString("month");
-                                array.add(new String(date)); // x軸:幾月
+                                if(data.getJSONObject(j).getString("name").equals("ac_1")){
+                                    String date = data.getJSONObject(j).getString("month");
+                                    array.add(new String(date)+"月"); // x軸:幾月
+                                }
                                 break;
                             case "month":
-                                String date_month = object.getJSONArray("data").getJSONObject(j).getString("month");
-                                String date_day= object.getJSONArray("data").getJSONObject(j).getString("day");
-                                String Date = date_month+"/"+date_day;
-                                array.add(new String(Date)); // x軸:幾月/幾號
+                                if(data.getJSONObject(j).getString("name").equals("ac_1")){
+                                    String date_month = data.getJSONObject(j).getString("month");
+                                    String date_day= data.getJSONObject(j).getString("day");
+                                    String Date = date_month+"/"+date_day;
+                                    array.add(new String(Date)); // x軸:幾月/幾號
+                                }
                                 break;
                             case "day":
-                                String date_hour = object.getJSONArray("data").getJSONObject(j).getString("hour");
-                                array.add(new String(date_hour)); // x軸:幾時
+                                if(data.getJSONObject(j).getString("name").equals("ac_1")){
+                                    String date_hour = data.getJSONObject(j).getString("hour");
+                                    array.add(new String(date_hour)); // x軸:幾時
+                                }
                                 break;
                             case "now":
-                                String date_hour1 = object.getJSONArray("data").getJSONObject(j).getString("hour");
-                                String date_min = object.getJSONArray("data").getJSONObject(j).getString("minute");
-                                String time = date_hour1+":"+date_min;
-                                array.add(new String(time)); // x軸:幾時:幾分
+                                if(data.getJSONObject(j).getString("name").equals("ac_1")){
+                                    String date_hour1 = data.getJSONObject(j).getString("hour");
+                                    String date_min = data.getJSONObject(j).getString("minute");
+                                    String time = date_hour1+":"+date_min;
+                                    array.add(new String(time)); // x軸:幾時:幾分
+                                }
                                 break;
                         }
                     }
                     Log.d("array_date", String.valueOf(array));
                     for (int i = 0;i < num;i++){
-                        //String label = object.getJSONArray("label").getString(i);
-                        String power = object.getJSONArray("data").getJSONObject(i).getString("total_kw"); // 總和
-                        BarEntries.add(new BarEntry(i, Float.parseFloat(power)));
-                        LineEntries.add(new Entry(i, Float.parseFloat(power)));
-                        //array.add(new String(label));
+                        if(data.getJSONObject(i).getString("name").equals("ac_1")){
+                            String power = data.getJSONObject(i).getString("total_kw"); // 總和
+                            BarEntries.add(new BarEntry(i, Float.parseFloat(power)));
+                            LineEntries.add(new Entry(i, Float.parseFloat(power)));
+                        }
                     }
                     switch (time) {
                         case "year":

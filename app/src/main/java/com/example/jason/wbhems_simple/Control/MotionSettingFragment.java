@@ -18,6 +18,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.jason.wbhems_simple.R;
 
 import org.json.JSONException;
@@ -53,6 +54,7 @@ public class MotionSettingFragment extends DialogFragment {
     }
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
+        requestQueue = Volley.newRequestQueue(getContext());
         cancel = getView().findViewById(R.id.btn_cancel_motion);
         confirm = getView().findViewById(R.id.btn_confirm_motion);
         delaysec = getView().findViewById(R.id.et_delaysec);
@@ -103,13 +105,13 @@ public class MotionSettingFragment extends DialogFragment {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setMotion(delaysec.getText().toString());
                 onStop();
             }
         });
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setMotion(delaysec.getText().toString());
                 onStop();
             }
         });

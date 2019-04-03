@@ -43,6 +43,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -90,7 +92,7 @@ public class ControlFragment_jun extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
+    private Timer timer;
     public ControlFragment_jun() {
         // Required empty public constructor
     }
@@ -144,10 +146,20 @@ public class ControlFragment_jun extends Fragment {
         ac_findViewById();
         fan_findViewById();
         exhaust_findViewById();
-        getRoom(); // 快速操作API
-        getHemsApplianceByName(); //抓各電器設備API
+        //宣告Timer
+        timer = new Timer();
+        MyTask task = new MyTask();
+        //設定Timer(task為執行內容，0代表立刻開始,間格3秒執行一次)
+        timer.schedule(task, 0,3000);
     }
-
+    class MyTask extends TimerTask {
+        @Override
+        public void run(){
+            // TODO Auto-generated method stub
+            getRoom(); // 快速操作API
+            getHemsApplianceByName(); //抓各電器設備API
+        }
+    }
     private void getHemsApplianceByName() {
         final JSONObject body = new JSONObject();
         try {
