@@ -26,6 +26,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class projection_92712 extends Activity {
 
@@ -42,6 +44,7 @@ public class projection_92712 extends Activity {
     final static long DURATION = 500;// 规定有效时间
     long[] mHits = new long[COUNTS];
     String User,Token,IP,Port;
+    private Timer timer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +63,11 @@ public class projection_92712 extends Activity {
         Token = setting.getString("TOKEN","");
         IP = setting.getString("IP","");
         Port = setting.getString("Port","");
+        //宣告Timer
+        timer = new Timer();
+        MyTask task = new MyTask();
+        //設定Timer(task為執行內容，0代表立刻開始,間格5秒執行一次)
+        timer.schedule(task, 10,5000);
         getHemsApplianceByName();
         linearLayout_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +83,7 @@ public class projection_92712 extends Activity {
         btn_On.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    setProjection("projection","1");
+                    setProjection("projector","1");
                     actionProjection("1","1");
                     getHemsApplianceByName();
             }
@@ -110,6 +118,13 @@ public class projection_92712 extends Activity {
                 actionProjection("1","4");
             }
         });
+    }
+    class MyTask extends TimerTask {
+        @Override
+        public void run(){
+            // TODO Auto-generated method stub
+            getHemsApplianceByName();
+        }
     }
     private void getHemsApplianceByName() {
         final JSONObject body = new JSONObject();
@@ -158,6 +173,7 @@ public class projection_92712 extends Activity {
         };
         requestQueue.add(postRequest);
     }
+
     private void actionProjection(final String address, final String cmd){
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url_action,
                 new Response.Listener<String>() {
@@ -185,11 +201,13 @@ public class projection_92712 extends Activity {
         };
         requestQueue.add(stringRequest);
     }
+
     private void setProjection(String name, String sw) {
         final JSONObject body = new JSONObject();
         try {
             body.put("action", "setHemsAppliance");
             body.put("field",User);
+            body.put("mode","control");
             body.put("name",name);
             body.put("switch",sw);
             body.put("token",Token);
@@ -201,6 +219,7 @@ public class projection_92712 extends Activity {
             public void onResponse(String response) {
                 Log.d("cmd",body.toString());
                 Log.d("setProjection_respone", response);
+                getHemsApplianceByName();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -220,6 +239,7 @@ public class projection_92712 extends Activity {
         };
         requestQueue.add(postRequest);
     }
+
     private void continuousClick(int count, long time) {
         //每次点击时，数组向前移动一位
         System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
@@ -228,11 +248,11 @@ public class projection_92712 extends Activity {
         if (mHits[0] >= (SystemClock.uptimeMillis() - DURATION)) {
             mHits = new long[COUNTS];//重新初始化数组
             //Toast.makeText(this, "連點了2次", Toast.LENGTH_SHORT).show();
-            setProjection("projection","0");
+            setProjection("projector","0");
             actionProjection("1","0");
             getHemsApplianceByName();
         }else {
-            setProjection("projection","0");
+            setProjection("projector","0");
             getHemsApplianceByName();
         }
     }
