@@ -143,8 +143,8 @@ public class IndexFragment_jun extends Fragment {
         //宣告Timer
         timer =new Timer();
         MyTask task = new MyTask();
-        //設定Timer(task為執行內容，0代表立刻開始,間格5秒執行一次)
-        timer.schedule(task, 0,5000);
+        //設定Timer(task為執行內容，0代表立刻開始,間格3秒執行一次)
+        timer.schedule(task, 0,3000);
     }
     class MyTask extends TimerTask{
         @Override
@@ -185,7 +185,7 @@ public class IndexFragment_jun extends Fragment {
                     int num = data.length();
                     String electricity_fee = data.getJSONObject(num-1).getString("month_fee"); // 累積電費(元)
                     String accumulate_consumption = data.getJSONObject(num-1).getString("consumption"); // 累積用電(度)
-                    settingedit.putString("price",accumulate_consumption).commit();
+                    settingedit.putString("price_92712",accumulate_consumption).commit();
                     tvPrice.setText(String.format("%.01f", Float.valueOf(electricity_fee))+"  元");
                 } catch (JSONException e) {
                     e.printStackTrace();

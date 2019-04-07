@@ -88,7 +88,7 @@ public class ControlFragment_jun extends Fragment {
     private ImageView img_Light_1, img_Light_2, img_Light_3, img_Light_4, img_Ac_1, img_Fan_1, img_Fan_2, img_Fan_3, img_Exhaust_1; //電器圖片
     //----
     private String tv_lux1,tv_lux2,tv_lux3,tv_lux4; // 燈光亮度
-    private String tv_temp1; // 空調溫度
+    private String tv_temp1 ="25"; // 空調溫度
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -149,8 +149,8 @@ public class ControlFragment_jun extends Fragment {
         //宣告Timer
         timer = new Timer();
         MyTask task = new MyTask();
-        //設定Timer(task為執行內容，0代表立刻開始,間格3秒執行一次)
-        timer.schedule(task, 0,3000);
+        //設定Timer(task為執行內容，0代表立刻開始,間格5秒執行一次)
+        timer.schedule(task, 10,5000);
     }
     class MyTask extends TimerTask {
         @Override
@@ -233,7 +233,8 @@ public class ControlFragment_jun extends Fragment {
                     }
                     //空調
                     String sw_ac1 = data.getJSONArray("list").getJSONObject(4).getString("switch");
-                    tv_temp1 = data.getJSONArray("list").getJSONObject(4).getString("setting");
+                    //tv_temp1 = data.getJSONArray("list").getJSONObject(4).getString("setting");
+                    String mode = data.getJSONArray("list").getJSONObject(4).getString("setting");
                     if(sw_ac1.equals("1")){
                         acmode1 = 1;
                         tvAcMode_1.setText("電源 : 開");
@@ -243,15 +244,16 @@ public class ControlFragment_jun extends Fragment {
                         tvAcMode_1.setText("電源 : 關");
                         img_Ac_1.setImageResource(R.drawable.air_conditioner_off);
                     }
-                    if(tv_temp1.equals("0")){
+                    if(mode.equals("0")){
                         tvAcFeatures_1.setText("模式 : 送風");
                         tvAc_Temp1.setText("");
                         sb_Ac_1.setVisibility(View.GONE);
-                    }else if(tv_temp1.equals("1")){
+                    }else if(mode.equals("1")){
                         tvAcFeatures_1.setText("模式 : 除濕");
                         tvAc_Temp1.setText("");
                         sb_Ac_1.setVisibility(View.GONE);
                     }else{
+                        tv_temp1 = mode;
                         tvAcFeatures_1.setText("模式 : 冷氣");
                         tvAc_Temp1.setText(tv_temp1);
                         sb_Ac_1.setVisibility(View.VISIBLE);

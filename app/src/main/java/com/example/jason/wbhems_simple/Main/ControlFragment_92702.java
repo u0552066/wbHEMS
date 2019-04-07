@@ -88,7 +88,7 @@ public class ControlFragment_92702 extends Fragment {
     private ImageView img_Light_1, img_Light_2, img_Light_3,img_Light_4,img_Light_5,img_Light_6, img_Ac_1, img_Ac_2, img_Ac_EL, img_Fan_1, img_Fan_2, img_Fan_3, img_Fan_4, img_Fan_5, img_Fan_6, img_Exhaust_1, img_Exhaust_2,img_Plug_1;
     //---------
     private String tv_lux1,tv_lux2,tv_lux3,tv_lux4,tv_lux5,tv_lux6; // 燈光亮度
-    private String tv_temp1,tv_temp2,tv_tempEL; // 空調溫度
+    private String tv_temp1 = "25",tv_temp2 = "25",tv_tempEL = "25"; // 空調溫度(記錄用)
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -150,8 +150,8 @@ public class ControlFragment_92702 extends Fragment {
         //宣告Timer
         timer = new Timer();
         MyTask task = new MyTask();
-        //設定Timer(task為執行內容，0代表立刻開始,間格3秒執行一次)
-        timer.schedule(task, 0,3000);
+        //設定Timer(task為執行內容，0代表立刻開始,間格5秒執行一次)
+        timer.schedule(task, 10,5000);
     }
     class MyTask extends TimerTask {
         @Override
@@ -263,9 +263,9 @@ public class ControlFragment_92702 extends Fragment {
                     String sw_ac1 = data.getJSONArray("list").getJSONObject(6).getString("switch");
                     String sw_ac2 = data.getJSONArray("list").getJSONObject(7).getString("switch");
                     String sw_acEL = data.getJSONArray("list").getJSONObject(17).getString("switch"); // Echonet Lite AC
-                    tv_temp1 = data.getJSONArray("list").getJSONObject(6).getString("setting");
-                    tv_temp2 = data.getJSONArray("list").getJSONObject(7).getString("setting");
-                    tv_tempEL = data.getJSONArray("list").getJSONObject(17).getString("setting");
+                    String mode1 = data.getJSONArray("list").getJSONObject(6).getString("setting");
+                    String mode2 = data.getJSONArray("list").getJSONObject(7).getString("setting");
+                    String modeEL = data.getJSONArray("list").getJSONObject(17).getString("setting");
                     if(sw_ac1.equals("1")){
                         acmode1 = 1;
                         tvAcMode_1.setText("電源 : 開");
@@ -293,43 +293,46 @@ public class ControlFragment_92702 extends Fragment {
                         tvAcMode_EL.setText("電源 : 關");
                         img_Ac_EL.setImageResource(R.drawable.air_conditioner_off);
                     }
-                    if(tv_temp1.equals("0")){
+                    if(mode1.equals("0")){
                         tvAcFeatures_1.setText("模式 : 送風");
                         tvAc_Temp1.setText("");
                         sb_Ac_1.setVisibility(View.GONE);
-                    }else if(tv_temp1.equals("1")){
+                    }else if(mode1.equals("1")){
                         tvAcFeatures_1.setText("模式 : 除濕");
                         tvAc_Temp1.setText("");
                         sb_Ac_1.setVisibility(View.GONE);
                     }else{
+                        tv_temp1 = mode1;
                         tvAcFeatures_1.setText("模式 : 冷氣");
                         tvAc_Temp1.setText(tv_temp1);
                         sb_Ac_1.setProgress(Integer.parseInt(tv_temp1)-18);
                         sb_Ac_1.setVisibility(View.VISIBLE);
                     }
-                    if(tv_temp2.equals("0")){
+                    if(mode2.equals("0")){
                         tvAcFeatures_2.setText("模式 : 送風");
                         tvAc_Temp2.setText("");
                         sb_Ac_2.setVisibility(View.GONE);
-                    }else if(tv_temp2.equals("1")){
+                    }else if(mode2.equals("1")){
                         tvAcFeatures_2.setText("模式 : 除濕");
                         tvAc_Temp2.setText("");
                         sb_Ac_2.setVisibility(View.GONE);
                     }else{
+                        tv_temp2 = mode2;
                         tvAcFeatures_2.setText("模式 : 冷氣");
                         tvAc_Temp2.setText(tv_temp2);
                         sb_Ac_2.setProgress(Integer.parseInt(tv_temp2)-18);
                         sb_Ac_2.setVisibility(View.VISIBLE);
                     }
-                    if(tv_tempEL.equals("0")){
+                    if(modeEL.equals("0")){
                         tvAcFeatures_EL.setText("模式 : 送風");
                         tvAc_TempEL.setText("");
                         sb_Ac_EL.setVisibility(View.GONE);
-                    }else if(tv_tempEL.equals("1")){
+                    }else if(modeEL.equals("1")){
                         tvAcFeatures_EL.setText("模式 : 除濕");
                         tvAc_TempEL.setText("");
                         sb_Ac_EL.setVisibility(View.GONE);
                     }else{
+                        tv_tempEL = modeEL;
                         tvAcFeatures_EL.setText("模式 : 冷氣");
                         tvAc_TempEL.setText(tv_tempEL);
                         sb_Ac_EL.setProgress(Integer.parseInt(tv_tempEL)-18);

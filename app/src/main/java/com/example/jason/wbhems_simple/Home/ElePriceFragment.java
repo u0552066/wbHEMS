@@ -18,6 +18,7 @@ public class ElePriceFragment extends DialogFragment {
     private SharedPreferences setting;
     private SharedPreferences.Editor settingedit;
     private TextView tvPrice;
+    String User,Token;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -41,9 +42,22 @@ public class ElePriceFragment extends DialogFragment {
         btn_OK = getView().findViewById(R.id.btn_OK);
         tvPrice = getView().findViewById(R.id.fragment_elePrice);
         setting = this.getActivity().getSharedPreferences("auto", 0);
+        User = setting.getString("User", "");
         settingedit = setting.edit();
-        String price = setting.getString("price","1.290");
-        tvPrice.setText(price);
+        switch (User){
+            case "92702":
+                String price1 = setting.getString("price_92702","");
+                tvPrice.setText(price1);
+                break;
+            case "92710":
+                String price2 = setting.getString("price_92710","");
+                tvPrice.setText(price2);
+                break;
+            case "92712":
+                String price3 = setting.getString("price_92712","");
+                tvPrice.setText(price3);
+                break;
+        }
         btn_OK.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

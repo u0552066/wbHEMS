@@ -179,7 +179,7 @@ public class DRFragment extends Fragment {
                                 item.put("history_p1", list.getJSONObject(i).getString("amount")); // 預計抑低量 (瓩)
                             }
                             if(list.getJSONObject(i).getString("duration").equals("null")){ // 如果為空值
-                                item.put("history_p1", "--");
+                                item.put("history_time", "--");
                             }else{
                                 item.put("history_time",list.getJSONObject(i).getString("duration")); // 抑低時間 (分)
                             }
@@ -189,7 +189,9 @@ public class DRFragment extends Fragment {
                                 item.put("history_p2", list.getJSONObject(i).getString("actual_load_sheeding")); // 實際抑低量 (瓩)
                             }
                             if(list.getJSONObject(i).getString("achieving_rate").equals("null")){
-                                item.put("history_result","--"); // 結果
+                                item.put("history_result","失敗"); // 結果
+                            }else if(Float.parseFloat(list.getJSONObject(i).getString("achieving_rate")) > 0){
+                                item.put("history_result","成功");
                             }else{
                                 item.put("history_result","失敗");
                             }

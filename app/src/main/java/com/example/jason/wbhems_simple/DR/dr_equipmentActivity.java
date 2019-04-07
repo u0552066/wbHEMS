@@ -135,10 +135,10 @@ public class dr_equipmentActivity extends AppCompatActivity {
                                 priority = Integer.parseInt(list.getJSONObject(i).getString("dr_priority"));
                                 if(!String.valueOf(priority).equals("0")) {
                                     mDatas.add(priority - 1, list.getJSONObject(i).getString("name").split("_")[0]);
-                                    if (list.getJSONObject(i).getString("power").equals("null")) {
+                                    if (list.getJSONObject(i).getString("average_power").equals("null")) {
                                         powers.add(priority - 1, "0.000");
                                     } else {
-                                        powers.add(priority - 1, list.getJSONObject(i).getString("power"));
+                                        powers.add(priority - 1, list.getJSONObject(i).getString("average_power"));
                                     }
                                     if (list.getJSONObject(i).getString("sheeding_willing").equals("null")) {
                                         dollars.add(priority - 1, "0");
@@ -160,10 +160,10 @@ public class dr_equipmentActivity extends AppCompatActivity {
                                 if(!String.valueOf(priority).equals("0")) {
                                     mDatas.add(priority - 1, list.getJSONObject(i).getString("name").split("_")[0]);
 
-                                    if (list.getJSONObject(i).getString("power").equals("null")) {
+                                    if (list.getJSONObject(i).getString("average_power").equals("null")) {
                                         powers.add(priority - 1, "0.000");
                                     } else {
-                                        powers.add(priority - 1, list.getJSONObject(i).getString("power"));
+                                        powers.add(priority - 1, list.getJSONObject(i).getString("average_power"));
                                     }
                                     if (list.getJSONObject(i).getString("sheeding_willing").equals("0")) {
                                         dollars.add(priority - 1, "不參與");
