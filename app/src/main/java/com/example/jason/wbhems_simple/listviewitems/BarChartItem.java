@@ -1,6 +1,7 @@
 package com.example.jason.wbhems_simple.listviewitems;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,8 @@ public class BarChartItem extends ChartItem {
     private String title, x, y;
     private Context context;
     private ArrayList<String> label;
+    private SharedPreferences setting;
+    String User;
     protected String[] values = new String[]{
             "1"
     };
@@ -39,7 +42,8 @@ public class BarChartItem extends ChartItem {
         this.context = c;
         this.x = xUnit;
         this.y = yUnit;
-
+        setting = context.getSharedPreferences("auto",0);
+        User = setting.getString("User", "");
         mTf = Typeface.createFromAsset(c.getAssets(), "OpenSans-Regular.ttf");
     }
 
@@ -88,7 +92,9 @@ public class BarChartItem extends ChartItem {
         xAxis.setDrawAxisLine(true);
         xAxis.setDrawGridLines(true);
         xAxis.setLabelCount(2);
-        xAxis.setLabelCount(5, false);
+        xAxis.setLabelCount(8, false);
+        xAxis.setGranularity(1);
+        xAxis.setGranularityEnabled(true);
         //自定义x轴显示
         MyXFormatter formatter = new MyXFormatter(values);
 //        xAxis.setValueFormatter(formatter);
@@ -105,11 +111,11 @@ public class BarChartItem extends ChartItem {
 
         YAxis leftAxis = holder.chart.getAxisLeft();
         leftAxis.setTypeface(mTf);
-        leftAxis.setLabelCount(5, false);
+        leftAxis.setLabelCount(10, false);
         leftAxis.setDrawAxisLine(true);
         leftAxis.setSpaceTop(20f);
         //y軸最小值
-//        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
        
         YAxis rightAxis = holder.chart.getAxisRight();
         rightAxis.setDrawAxisLine(false);
@@ -125,12 +131,17 @@ public class BarChartItem extends ChartItem {
         holder.chart.setMarker(mv);
         // set data
         holder.chart.setData((BarData) mChartData);
+        ((BarData) mChartData).setBarWidth(0.15f);
         holder.chart.setFitBars(true);
-        
+
         // do not forget to refresh the chart
 //        holder.chart.invalidate();
         holder.chart.animateY(700);
-
+        if(User.equals("92702")){
+            holder.chart.groupBars(-0.5f,0.2f,0.01f);
+        }else{
+            holder.chart.groupBars(-0.5f,0.36f,0.01f);
+        }
         return convertView;
     }
     

@@ -44,8 +44,8 @@ public class Chart implements OnChartGestureListener {
         for(int i = 0; i < DataSet.length; i++){
             Log.d("DataSet", String.valueOf(DataSet.length));
             LineDataSet d1 = new LineDataSet(array, DataSet[i]);
-            d1.setLineWidth(2.5f);
-            d1.setCircleRadius(4.5f);
+            d1.setLineWidth(2f);
+            d1.setCircleRadius(0f);
             d1.setColors(Color.rgb(100, 217, 215));
             d1.setCircleColors(Color.rgb(100, 217, 215));
             d1.setHighLightColor(Color.rgb(244, 117, 117));
@@ -57,6 +57,23 @@ public class Chart implements OnChartGestureListener {
         return cd;
     }
 
+    public LineData generateSixDataLine(String[] DataSet, ArrayList<Entry>[] array, int colors[]) {
+        ArrayList<ILineDataSet> sets = new ArrayList<ILineDataSet>();
+        for(int i = 0; i < DataSet.length; i++){
+            Log.d("DataSet", String.valueOf(DataSet.length));
+            LineDataSet d1 = new LineDataSet(array[i], DataSet[i]);
+            d1.setLineWidth(2f);
+            d1.setCircleRadius(0f);
+            d1.setColors(colors[i]);
+            d1.setCircleColors(colors[i]);
+            d1.setHighLightColor(colors[i]);
+            d1.setDrawValues(false);
+            sets.add(d1);
+        }
+
+        LineData cd = new LineData(sets);
+        return cd;
+    }
     /**
      * generates a random ChartData object with just one DataSet
      *
@@ -78,6 +95,24 @@ public class Chart implements OnChartGestureListener {
         cd.setBarWidth(0.9f);
         return cd;
     }
+
+    public BarData generateSixDataBar(String[] DataSet, ArrayList<BarEntry>[] array, int colors[]) {
+        ArrayList<IBarDataSet> sets = new ArrayList<IBarDataSet>();
+        for(int i = 0; i < DataSet.length; i++){
+            Log.d("DataSet", String.valueOf(DataSet.length));
+            BarDataSet d1 = new BarDataSet(array[i], DataSet[i]);
+            d1.setColors(colors[i]);
+            d1.setDrawValues(false);
+            d1.setHighLightAlpha(255);
+
+            sets.add(d1);
+        }
+
+        BarData cd = new BarData(sets);
+        cd.setBarWidth(0.9f);
+        return cd;
+    }
+
 
     /**
      * generates a random ChartData object with just one DataSet

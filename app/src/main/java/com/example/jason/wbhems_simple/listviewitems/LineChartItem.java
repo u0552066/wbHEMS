@@ -94,13 +94,13 @@ public class LineChartItem extends ChartItem {
 
         YAxis leftAxis = holder.chart.getAxisLeft();
         leftAxis.setTypeface(mTf);
-        leftAxis.setLabelCount(5, false);
+        leftAxis.setLabelCount(10, false);
         //y軸最小值
-//        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        leftAxis.setAxisMinimum(-1); // this replaces setStartAtZero(true)
         
         YAxis rightAxis = holder.chart.getAxisRight();
         rightAxis.setTypeface(mTf);
-        rightAxis.setLabelCount(5, false);
+        rightAxis.setLabelCount(10, false);
         rightAxis.setDrawGridLines(false);
         rightAxis.setDrawLabels(false); // 右侧坐标轴数组Label
         //y軸最小值

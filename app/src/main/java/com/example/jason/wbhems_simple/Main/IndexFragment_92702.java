@@ -4,6 +4,7 @@ package com.example.jason.wbhems_simple.Main;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -75,18 +76,22 @@ public class IndexFragment_92702 extends Fragment {
     private ListView lv;
     private Chart chart;
     private RequestQueue requestQueue;
-    private RequestQueue requestQueue_dr;
     private StringRequest postRequest;
-    private StringRequest postRequest_dr;
     private String url_room = "http://140.116.163.19:10107/epslab_ems/api/room.php";
     private String url_dr = "http://140.116.163.19:10107/epslab_ems/api/dr.php";
     private String url_general = "http://140.116.163.19:10107/epslab_ems/api/general.php";
     private String url_ami = "http://140.116.163.19:10107/epslab_ems/api/ami.php";
+    private String url_electricity = "http://140.116.163.19:10107/epslab_ems/api/electricity.php";
     private int mYear, mMonth, mDay;
     private EditText txtTime;
     private SharedPreferences setting;
     private SharedPreferences.Editor settingedit;
     String User,Token;
+    private int colors[] = {Color.rgb(255,0,0),Color.rgb(0,0,205),
+            Color.rgb(51,201,51),Color.rgb(255,215,0),Color.rgb(191,128,64)};
+    private ArrayList<Entry>[] totalList_line;
+    private ArrayList[] totalList_bar;
+    String Chart_id[] = {"空調1","空調2","照明、風扇、排風扇","插座","總和"};
     private Timer timer;
     public IndexFragment_92702() {
         // Required empty public constructor
@@ -121,7 +126,6 @@ public class IndexFragment_92702 extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         requestQueue = Volley.newRequestQueue(getActivity());
-        requestQueue_dr = Volley.newRequestQueue(getActivity());
         setting = this.getActivity().getSharedPreferences("auto",0);
         User = setting.getString("User", "");
         Token = setting.getString("TOKEN","");
@@ -154,10 +158,56 @@ public class IndexFragment_92702 extends Fragment {
         public void run(){
             // TODO Auto-generated method stub
             getSensor(); // 室內資訊
-            getGeneral(); // 天氣資訊and電費
+            getGeneral(); // 天氣資訊
+            getElectricity(); // 累積用電and累積電費
             getPower(); // 取得及時用電資料
         }
     }
+
+    private void getElectricity() {
+        final JSONObject body = new JSONObject();
+        try {
+            body.put("action", "getHemsElectricityFee");
+            body.put("field",User);
+            body.put("token",Token);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        postRequest = new StringRequest(Request.Method.POST, url_electricity, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+                    Log.d("92702_electricity", object.toString());
+                    JSONArray data = object.getJSONArray("data");
+                    int num = data.length();
+                    String electricity_fee = data.getJSONObject(num-1).getString("month_fee"); // 累積電費(元)
+                    String accumulate_consumption = data.getJSONObject(num-1).getString("consumption"); // 累積用電(度)
+                    settingedit.putString("price",accumulate_consumption).commit();
+                    tvPrice.setText(String.format("%.01f", Float.valueOf(electricity_fee))+"  元");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VolleyError_electricity", error.toString());
+            }
+        }) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                return body.toString().getBytes();
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+        };
+        requestQueue.add(postRequest);
+    }
+
     private void getGeneral() {
         final JSONObject body = new JSONObject();
         try {
@@ -176,11 +226,7 @@ public class IndexFragment_92702 extends Fragment {
                     JSONArray data = object.getJSONArray("data");
                     String temp = data.getJSONObject(0).getString("temperature");
                     String weather = data.getJSONObject(0).getString("weather_status");
-                    String electricity_fee = data.getJSONObject(0).getString("electricity_fee"); // 累積電費(元)
-                    String accumulate_consumption = data.getJSONObject(0).getString("accumulate_consumption"); // 累積用電(度)
-                    settingedit.putString("price",accumulate_consumption).commit();
                     tvOutdoor_temp.setText(String.format("%.01f", Float.valueOf(temp)));
-                    tvPrice.setText(String.format("%.01f", Float.valueOf(electricity_fee))+"  元");
                     switch(weather){
                         case "1":
                             tvWeather.setText("晴");
@@ -501,7 +547,7 @@ public class IndexFragment_92702 extends Fragment {
                 String[] date = formatter.format(curDate).split("-");
                 Log.d("now", formatter.format(curDate));
                 txtTime.setVisibility(View.GONE);
-                getChart("getHistoryInNow", Integer.valueOf(date[0]), Integer.valueOf(date[1])-1, Integer.valueOf(date[2]));
+                getChart("now", Integer.valueOf(date[0]), Integer.valueOf(date[1])-1, Integer.valueOf(date[2]));
             }
         });
         btnDay.setOnClickListener(new Button.OnClickListener() {
@@ -517,7 +563,7 @@ public class IndexFragment_92702 extends Fragment {
                         String format = setDateFormat(year,month,day);
                         txtTime.setVisibility(View.VISIBLE);
                         txtTime.setText(format);
-                        getChart("getHistoryInDay", year, month, day);
+                        getChart("day", year, month, day);
                     }
 
                 }, mYear,mMonth, mDay).show();
@@ -536,7 +582,7 @@ public class IndexFragment_92702 extends Fragment {
                         String format = setMonthFormat(year,month);
                         txtTime.setVisibility(View.VISIBLE);
                         txtTime.setText(format);
-                        getChart("getHistoryInMonth", year, month, 0);
+                        getChart("month", year, month, 0);
                     }
 
                 }, mYear,mMonth, mDay).show();
@@ -555,7 +601,7 @@ public class IndexFragment_92702 extends Fragment {
                         String format = String.valueOf(year);
                         txtTime.setVisibility(View.VISIBLE);
                         txtTime.setText(format);
-                        getChart("getHistoryInYear", year, 0, 0);
+                        getChart("year", year, 0, 0);
                     }
 
                 }, mYear,mMonth, mDay).show();
@@ -673,96 +719,221 @@ public class IndexFragment_92702 extends Fragment {
     }
 
     public void sample() {
-        ArrayList<ChartItem> list = new ArrayList<ChartItem>();
-        ArrayList<Entry> LinePower = new ArrayList<Entry>();
-        ArrayList<String> array = new ArrayList<String>();
-        String[] Chart_id = {"Energy"};
-        String xUnit ="時間";
-        try {
-            for (int i = 0;i < 10;i++){
-                LinePower.add(new Entry(i, Float.parseFloat("1")));
-                array.add(new String("1"));
-            }
-            list.add(new LineChartItem(chart.generateDataLine(Chart_id, LinePower()), getActivity(), "用電量", Time(), "kWh", xUnit));
-
-            ChartDataAdapter cda = new ChartDataAdapter(getActivity(), list);
-            lv.setAdapter(cda);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date curDate = new Date(System.currentTimeMillis()) ; // 獲取當前時間
+        String[] date = formatter.format(curDate).split("-");
+        Log.d("now", formatter.format(curDate));
+        txtTime.setVisibility(View.GONE);
+        getChart("now", Integer.valueOf(date[0]), Integer.valueOf(date[1])-1, Integer.valueOf(date[2]));
     }
 
-    public void getChart(final String button, int year, int month, int day) {
+    public void getChart(final String time, int year, int month, int day) {
         final JSONObject body = new JSONObject();
         try {
-            body.put("action", button);
-            body.put("field", "xinglong2");
-            body.put("cluster", "1");
-            body.put("token", "mDSbpZrRXACEsBE8WR34");
-            switch (button){
-                case "getHistoryInYear":
+            body.put("action", "getHemsConsumptionHistories");
+            body.put("field", User);
+            body.put("time",time);
+            body.put("token", Token);
+            switch (time){
+                case "year":
                     body.put("year", String.valueOf(year));
                     break;
-                case "getHistoryInMonth":
-                    body.put("year", String.valueOf(year));
-                    body.put("month", String.valueOf(month+1));
-                    break;
-                case "getHistoryInDay":
+                case "month":
                     body.put("year", String.valueOf(year));
                     body.put("month", String.valueOf(month+1));
-                    body.put("day", String.valueOf(day));
                     break;
-                case "getHistoryInNow":
+                case "day":
                     body.put("year", String.valueOf(year));
                     body.put("month", String.valueOf(month+1));
                     body.put("day", String.valueOf(day));
                     break;
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.d("getChart_1", String.valueOf(e));
         }
 
-        postRequest = new StringRequest(Request.Method.POST, url_room, new Response.Listener<String>() {
+        postRequest = new StringRequest(Request.Method.POST, url_ami, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                // response
                 ArrayList<ChartItem> list = new ArrayList<ChartItem>();
-                ArrayList<BarEntry> BarEntries = new ArrayList<BarEntry>();
-                ArrayList<Entry> LineEntries = new ArrayList<Entry>();
-                ArrayList<String> array = new ArrayList<String>();
-                String[] Chart_id = {"Power"};
+                totalList_bar = new ArrayList[5];
+                totalList_line = new ArrayList[5];
+                ArrayList<BarEntry> BarEntries_ac1 = new ArrayList<BarEntry>();// 空調1長條圖
+                ArrayList<Entry> LineEntries_ac1 = new ArrayList<Entry>();     // 空調1折線圖
+                ArrayList<BarEntry> BarEntries_ac2 = new ArrayList<BarEntry>();// 空調2長條圖
+                ArrayList<Entry> LineEntries_ac2 = new ArrayList<Entry>();     // 空調2折線圖
+                ArrayList<BarEntry> BarEntries_appliance = new ArrayList<BarEntry>();// 照明、風扇、排風扇長條圖
+                ArrayList<Entry> LineEntries_appliance = new ArrayList<Entry>();     // 照明、風扇、排風扇折線圖
+                ArrayList<BarEntry> BarEntries_plug = new ArrayList<BarEntry>();// 插座長條圖
+                ArrayList<Entry> LineEntries_plug = new ArrayList<Entry>();     // 插座折線圖
+                ArrayList<BarEntry> BarEntries_all = new ArrayList<BarEntry>(); // 總和長條圖
+                ArrayList<Entry> LineEntries_all = new ArrayList<Entry>();      // 總和折線圖
+                ArrayList<String> array = new ArrayList<String>();// 時間軸資料
                 try {
                     Log.d("body", body.toString());
-                    //JSONArray array = new JSONArray(response);
+                    int num_date = 0;
                     JSONObject object = new JSONObject(response);
-                    Log.d("Login", object.toString());
-                    int num = object.getJSONArray("label").length();
-                    Log.d("num", String.valueOf(num));
-                    for (int i = 0;i < num;i++){
-                        String label = object.getJSONArray("label").getString(i);
-                        String power = object.getJSONArray("power").getString(i);
-                        BarEntries.add(new BarEntry(i, Float.parseFloat(power)));
-                        LineEntries.add(new Entry(i, Float.parseFloat(power)));
-                        array.add(new String(label));
+                    Log.d("getChart_response",object.toString());
+                    JSONArray data = object.getJSONArray("data");
+                    int num = data.length(); // 總資料筆數
+                    for(int i = 0; i<num; i++){
+                        if(data.getJSONObject(i).getString("name").equals("ac_1")){
+                            num_date = num_date+1; // 日期筆數(x軸)
+                        }
                     }
-                    switch (button) {
-                        case "getHistoryInYear":
-                            list.add(new BarChartItem(chart.generateDataBar(Chart_id, BarEntries), getActivity(), "用電量 (度)", array, "kWh", "時間(月份)"));
+                    Log.d("Num_Date", String.valueOf(num_date));
+                    for(int j = 0; j<num; j++){
+                        switch (time){
+                            case "year":
+                                if(data.getJSONObject(j).getString("name").equals("ac_1")){
+                                    String date = data.getJSONObject(j).getString("month");
+                                    array.add(new String(date)+"月"); // x軸:幾月
+                                }
+                                break;
+                            case "month":
+                                if(data.getJSONObject(j).getString("name").equals("ac_1")){
+                                    String date_month = data.getJSONObject(j).getString("month");
+                                    String date_day= data.getJSONObject(j).getString("day");
+                                    String Date = date_month+"/"+date_day;
+                                    array.add(new String(Date)); // x軸:幾月/幾號
+                                }
+                                break;
+                            case "day":
+                                if(data.getJSONObject(j).getString("name").equals("ac_1")){
+                                    String date_hour = data.getJSONObject(j).getString("hour");
+                                    array.add(new String(date_hour)); // x軸:幾時
+                                }
+                                break;
+                            case "now":
+                                if(data.getJSONObject(j).getString("name").equals("ac_1")){
+                                    String date_hour1 = data.getJSONObject(j).getString("hour");
+                                    String date_min = data.getJSONObject(j).getString("minute");
+                                    String time = date_hour1+":"+date_min;
+                                    array.add(new String(time)); // x軸:幾時:幾分
+                                }
+                                break;
+                        }
+                    }
+                    Log.d("array_date", String.valueOf(array));
+                    int ac_1 = 0;
+                    for (int i = 0;i < num;i++){
+                        if(data.getJSONObject(i).getString("name").equals("ac_1")){
+                            String power = data.getJSONObject(i).getString("total_kw");
+                            BarEntries_ac1.add(new BarEntry(ac_1, Float.parseFloat(power))); // 空調1年、月、日資料
+                            LineEntries_ac1.add(new Entry(ac_1, Float.parseFloat(power))); // 空調1即時資料
+                            ac_1 = ac_1 + 1;
+                        }
+                    }
+                    int ac_2 = 0;
+                    for (int i = 0;i < num;i++){
+                        if(data.getJSONObject(i).getString("name").equals("ac_2")){
+                            String power = data.getJSONObject(i).getString("total_kw");
+                            BarEntries_ac2.add(new BarEntry(ac_2, Float.parseFloat(power))); // 空調1年、月、日資料
+                            LineEntries_ac2.add(new Entry(ac_2, Float.parseFloat(power))); // 空調1即時資料
+                            ac_2 = ac_2 + 1;
+                        }
+                    }
+                    int appliance = 0;
+                    for (int i = 0;i < num;i++){
+                        if(data.getJSONObject(i).getString("name").equals("appliance_1")){
+                            String power = data.getJSONObject(i).getString("total_kw");
+                            BarEntries_appliance.add(new BarEntry(appliance, Float.parseFloat(power)));
+                            LineEntries_appliance.add(new Entry(appliance, Float.parseFloat(power)));
+                            appliance = appliance + 1;
+                        }
+                    }
+                    int plug = 0;
+                    for (int i = 0;i < num;i++){
+                        if(data.getJSONObject(i).getString("name").equals("plug_1")){
+                            String power = data.getJSONObject(i).getString("total_kw");
+                            BarEntries_plug.add(new BarEntry(plug, Float.parseFloat(power)));
+                            LineEntries_plug.add(new Entry(plug, Float.parseFloat(power)));
+                            plug = plug + 1;
+                        }
+                    }
+                    for(int j = 0; j < num_date; j++) {
+                        float p = 0;
+                        for (int i = 0; i < num; i++) {
+                            switch (time) {
+                                case "year":
+                                    if ((data.getJSONObject(i).getString("month")+"月").equals(array.get(j))) {
+                                        String power = data.getJSONObject(i).getString("total_kw");
+                                        p = p + Float.parseFloat(power);
+                                        Log.d("PPPP", String.valueOf(p));
+                                    }
+                                    break;
+                                case "month":
+                                    if (data.getJSONObject(i).getString("day").equals(array.get(j).split("/")[1])) {
+                                        String power = data.getJSONObject(i).getString("total_kw");
+                                        p = p + Float.parseFloat(power);
+                                        Log.d("PPPP", String.valueOf(p));
+                                    }
+                                    break;
+                                case "day":
+                                    if (data.getJSONObject(i).getString("hour").equals(array.get(j))) {
+                                        String power = data.getJSONObject(i).getString("total_kw");
+                                        p = p + Float.parseFloat(power);
+                                        Log.d("PPPP", String.valueOf(p));
+                                    }
+                                    break;
+                                case "now":
+                                    if ((data.getJSONObject(i).getString("hour")+":"+
+                                            data.getJSONObject(i).getString("minute")).equals(array.get(j))) {
+                                        String power = data.getJSONObject(i).getString("total_kw");
+                                        p = p + Float.parseFloat(power);
+                                        Log.d("PPPP", String.valueOf(p));
+                                    }
+                                    break;
+                            }
+                        }
+                        BarEntries_all.add(new BarEntry(j, p));
+                        LineEntries_all.add(new Entry(j, p));
+                    }
+                    for(int i = 0; i < Chart_id.length; i++){
+                        totalList_bar[i] = new ArrayList<BarEntry>();
+                    }
+                    for(int i = 0; i < Chart_id.length; i++){
+                        totalList_line[i] = new ArrayList<Entry>();
+                    }
+                    switch (time) {
+                        case "year":
+                            totalList_bar[0] = BarEntries_ac1;
+                            totalList_bar[1] = BarEntries_ac2;
+                            totalList_bar[2] = BarEntries_appliance;
+                            totalList_bar[3] = BarEntries_plug;
+                            totalList_bar[4] = BarEntries_all;
+                            list.add(new BarChartItem(chart.generateSixDataBar(Chart_id,totalList_bar,colors), getActivity(), "", array, "kWh", "時間(月份)"));
                             break;
-                        case "getHistoryInMonth":
-                            list.add(new BarChartItem(chart.generateDataBar(Chart_id, BarEntries), getActivity(), "用電量 (度)", array, "kWh", "時間(日)"));
+                        case "month":
+                            totalList_bar[0] = BarEntries_ac1;
+                            totalList_bar[1] = BarEntries_ac2;
+                            totalList_bar[2] = BarEntries_appliance;
+                            totalList_bar[3] = BarEntries_plug;
+                            totalList_bar[4] = BarEntries_all;
+                            list.add(new BarChartItem(chart.generateSixDataBar(Chart_id,totalList_bar,colors), getActivity(), "", array, "kWh", "時間(日)"));
                             break;
-                        case "getHistoryInDay":
-                            list.add(new BarChartItem(chart.generateDataBar(Chart_id, BarEntries), getActivity(), "用電量 (度)", array, "kWh", "時間(小時)"));
+                        case "day":
+                            totalList_bar[0] = BarEntries_ac1;
+                            totalList_bar[1] = BarEntries_ac2;
+                            totalList_bar[2] = BarEntries_appliance;
+                            totalList_bar[3] = BarEntries_plug;
+                            totalList_bar[4] = BarEntries_all;
+                            list.add(new BarChartItem(chart.generateSixDataBar(Chart_id,totalList_bar,colors), getActivity(), "", array, "kWh", "時間(小時)"));
                             break;
-                        case "getHistoryInNow":
-                            list.add(new LineChartItem(chart.generateDataLine(Chart_id, LineEntries), getActivity(), "實功 (瓩)", array, "kW", "時間(分鐘)"));
+                        case "now":
+                            totalList_line[0] = LineEntries_ac1;
+                            totalList_line[1] = LineEntries_ac2;
+                            totalList_line[2] = LineEntries_appliance;
+                            totalList_line[3] = LineEntries_plug;
+                            totalList_line[4] = LineEntries_all;
+                            list.add(new LineChartItem(chart.generateSixDataLine(Chart_id,totalList_line,colors), getActivity(), "", array, "kW", "時間(分鐘)"));
                             break;
                     }
                     ChartDataAdapter cda = new ChartDataAdapter(getActivity(), list);
                     lv.setAdapter(cda);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Log.e("Error_addData", String.valueOf(e));
                 }
             }
         }, new Response.ErrorListener() {

@@ -122,7 +122,7 @@
     <string name="title_comfort">舒適度設定</string>
     <string name="title_dim">照度設定</string>
     <string name="title_motion">移動延遲設定</string>
-    <string name="title_price">設備投標價格</string>
+    <string name="title_price">最低參加節電行動補償金額</string>
     <string name="current_comfort">目前舒適度&#160;：</string>
     <string name="motion_setting">移動延遲參數設定&#160;(分)：</string>
     <string name="price_setting">投標價格&#160;：</string>
@@ -302,7 +302,7 @@
     <string name="dr_device">設備</string>
     <string name="dr_energy_used">用電(瓩)</string>
     <string name="dr_re_power">復電</string>
-    <string name="dr_price">設備投標價格(元)</string>
+    <string name="dr_price">設置投標價格(元)</string>
     <string name="left_light">左區照明</string>
     <string name="mid_light">中區照明</string>
     <string name="right_light">右區照明</string>
